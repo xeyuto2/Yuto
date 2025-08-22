@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>My Heart's Apology ❤️</title>
+  <meta name="description" content="A beautiful heartfelt apology filled with love." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Dancing+Script:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #ff6b9d;
+      --secondary: #c44569;
+      --accent: #f8b500;
+      --rose-gold: #e8b4cb;
+      --light-pink: #ffeef4;
+      --white: #ffffff;
+      --text-dark: #2d1b3d;
+      --text-muted: #8b5a7c;
+      --shadow: rgba(196, 69, 105, 0.3);
+      --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background: 
+        radial-gradient(circle at 20% 80%, rgba(255, 107, 157, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(196, 69, 105, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(248, 181, 0, 0.2) 0%, transparent 50%),
+        linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+      color: var(--text-dark);
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Floating elements background */
+    .bg-elements {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .floating-shape {
+      position: absolute;
+      opacity: 0.1;
+      animation: float 20s infinite ease-in-out;
+    }
+
+    .shape-1 {
+      top: 10%;
+      left: 10%;
+      width: 100px;
+      height: 100px;
+      background: var(--gradient-1);
+      border-radius: 50%;
+      animation-delay: 0s;
+    }
+
+    .shape-2 {
+      top: 20%;
+      right: 15%;
+      width: 80px;
+      height: 80px;
+      background: var(--gradient-2);
+      border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+      animation-delay: -5s;
+    }
+
+    .shape-3 {
+      bottom: 20%;
+      left: 20%;
+      width: 120px;
+      height: 120px;
+      background: var(--gradient-3);
+      border-radius: 50%;
+      animation-delay: -10s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      33% { transform: translateY(-20px) rotate(120deg); }
+      66% { transform: translateY(10px) rotate(240deg); }
+    }
+
+    .container {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    .card {
+      max-width: 1100px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 32px;
+      overflow: hidden;
+      box-shadow: 
+        0 32px 64px rgba(196, 69, 105, 0.2),
+        0 0 0 1px rgba(255, 255, 255, 0.3);
+      position: relative;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--accent), var(--secondary));
+    }
+
+    .ribbon {
+      position: absolute;
+      top: 24px;
+      right: -20px;
+      background: linear-gradient(135deg, #ff6b9d, #c44569);
+      color: white;
+      padding: 12px 40px 12px 24px;
+      border-radius: 24px 0 0 24px;
+      font-weight: 600;
+      font-size: 14px;
+      letter-spacing: 0.5px;
+      box-shadow: 0 8px 32px rgba(196, 69, 105, 0.4);
+      transform: translateX(20px);
+      animation: slideIn 1s ease-out 0.5s both;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(100px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 3rem;
+      padding: 3rem;
+      align-items: center;
+    }
+
+    @media (max-width: 768px) {
+      .hero {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        padding: 2rem;
+      }
+      .ribbon {
+        position: static;
+        transform: none;
+        border-radius: 24px;
+        margin-bottom: 2rem;
+        text-align: center;
+      }
+    }
+
+    .content {
+      animation: fadeInUp 1s ease-out;
+    }
+
+    @keyframes fadeInUp {
+      from { transform: translateY(30px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      background: linear-gradient(135deg, var(--light-pink), rgba(255, 107, 157, 0.1));
+      border: 1px solid rgba(255, 107, 157, 0.2);
+      border-radius: 50px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--secondary);
+      margin-bottom: 2rem;
+      animation: glow 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes glow {
+      from { box-shadow: 0 0 20px rgba(255, 107, 157, 0.3); }
+      to { box-shadow: 0 0 30px rgba(255, 107, 157, 0.5), 0 0 40px rgba(255, 107, 157, 0.2); }
+    }
+
+    .title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .script-name {
+      font-family: 'Dancing Script', cursive;
+      font-size: clamp(3rem, 6vw, 5rem);
+      font-weight: 700;
+      color: var(--secondary);
+      text-shadow: 2px 2px 4px rgba(196, 69, 105, 0.2);
+      display: inline-block;
+      animation: heartbeat 2s ease-in-out infinite;
+    }
+
+    @keyframes heartbeat {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .subtitle {
+      font-size: 1.2rem;
+      line-height: 1.6;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+      font-weight: 300;
+    }
+
+    .typewriter-container {
+      min-height: 60px;
+      margin: 2rem 0;
+    }
+
+    .typewriter {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--secondary);
+      border-right: 2px solid var(--primary);
+      white-space: nowrap;
+      overflow: hidden;
+      animation: blink 1s step-end infinite;
+    }
+
+    @keyframes blink {
+      50% { border-color: transparent; }
+    }
+
+    .buttons {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+
+    .btn {
+      padding: 16px 32px;
+      border: none;
+      border-radius: 50px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      transition: left 0.5s;
+    }
+
+    .btn:hover::before {
+      left: 100%;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      box-shadow: 0 8px 32px var(--shadow);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px var(--shadow);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.9);
+      color: var(--secondary);
+      border: 2px solid var(--rose-gold);
+    }
+
+    .btn-secondary:hover {
+      background: var(--light-pink);
+      transform: translateY(-2px);
+    }
+
+    .btn-accent {
+      background: linear-gradient(135deg, var(--accent), #ff9f43);
+      color: white;
+    }
+
+    .btn-accent:hover {
+      transform: translateY(-2px) scale(1.05);
+    }
+
+    .promises {
+      background: linear-gradient(135deg, rgba(255, 107, 157, 0.05), rgba(248, 181, 0, 0.05));
+      border-radius: 24px;
+      padding: 2rem;
+      border: 1px solid rgba(255, 107, 157, 0.1);
+    }
+
+    .promises h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      color: var(--secondary);
+      margin-bottom: 1rem;
+    }
+
+    .promise-tags {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .promise-tag {
+      background: rgba(255, 255, 255, 0.8);
+      color: var(--secondary);
+      padding: 10px 16px;
+      border-radius: 50px;
+      font-size: 14px;
+      font-weight: 500;
+      border: 1px solid rgba(255, 107, 157, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .promise-tag:hover {
+      background: var(--light-pink);
+      transform: translateY(-2px);
+    }
+
+    .artwork {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: fadeInRight 1s ease-out 0.3s both;
+    }
+
+    @keyframes fadeInRight {
+      from { transform: translateX(30px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    .heart-illustration {
+      width: 300px;
+      height: 300px;
+      position: relative;
+    }
+
+    .heart-svg {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 16px 32px rgba(255, 107, 157, 0.3));
+      animation: pulse 3s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+    }
+
+    .floating-hearts {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .floating-heart {
+      position: absolute;
+      font-size: 20px;
+      animation: floatUp 4s linear infinite;
+      opacity: 0.7;
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(100vh) scale(0);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.7;
+        transform: translateY(90vh) scale(1);
+      }
+      90% {
+        opacity: 0.7;
+        transform: translateY(-10vh) scale(1);
+      }
+      100% {
+        transform: translateY(-20vh) scale(0);
+        opacity: 0;
+      }
+    }
+
+    /* Modal Styles */
+    .modal {
+      border: none;
+      border-radius: 24px;
+      padding: 0;
+      max-width: 600px;
+      width: 90%;
+      backdrop-filter: blur(20px);
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 32px 64px rgba(0, 0, 0, 0.3);
+    }
+
+    .modal::backdrop {
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(8px);
+    }
+
+    .modal-header {
+      padding: 2rem 2rem 1rem;
+      border-bottom: 1px solid rgba(255, 107, 157, 0.1);
+    }
+
+    .modal-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      color: var(--secondary);
+      margin: 0;
+    }
+
+    .modal-body {
+      padding: 2rem;
+      line-height: 1.8;
+      font-size: 1.1rem;
+      color: var(--text-dark);
+    }
+
+    .modal-footer {
+      padding: 1rem 2rem 2rem;
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 2rem;
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.2rem;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(10px);
+    }
+
+    .signature {
+      color: var(--secondary);
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-elements">
+    <div class="floating-shape shape-1"></div>
+    <div class="floating-shape shape-2"></div>
+    <div class="floating-shape shape-3"></div>
+  </div>
+
+  <div class="floating-hearts" id="floatingHearts"></div>
+
+  <div class="container">
+    <div class="card">
+      <div class="ribbon">From my heart with love 💌</div>
+      
+      <div class="hero">
+        <div class="content">
+          <div class="tag">
+            <span>💕</span>
+            <span>Long distance but close hearts</span>
+          </div>
+          
+          <h1 class="title">
+            I'm sorry,<br>
+            <span class="script-name" id="herName">Shifah</span>
+          </h1>
+          
+          <p class="subtitle">
+            I was thoughtless last night, and you didn't deserve that. I'm not here with excuses—only love, 
+            accountability, and a heart ready to do better for us. ✨
+          </p>
+          
+          <div class="typewriter-container">
+            <div class="typewriter" id="typewriter"></div>
+          </div>
+          
+          <div class="buttons">
+            <button class="btn btn-primary" id="openLetter">
+              💌 Read my letter
+            </button>
+            <a class="btn btn-secondary" id="songBtn" href="https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM5M" target="_blank">
+              🎵 Play our song
+            </a>
+            <button class="btn btn-accent" id="forgiveBtn" data-wa="918113929581">
+              💖 Forgive me?
+            </button>
+          </div>
+          
+          <div class="promises">
+            <h3>My promises to you</h3>
+            <div class="promise-tags">
+              <span class="promise-tag">✨ I own my mistake</span>
+              <span class="promise-tag">👂 Listening with my whole heart</span>
+              <span class="promise-tag">💫 Choosing kindness always</span>
+              <span class="promise-tag">🌟 Actions that show my love</span>
+              <span class="promise-tag">💕 Protecting what we have</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="artwork">
+          <div class="heart-illustration">
+            <svg class="heart-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="heartGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style="stop-color:#ff6b9d;stop-opacity:1" />
+                  <stop offset="50%" style="stop-color:#c44569;stop-opacity:1" />
+                  <stop offset="100%" style="stop-color:#f8b500;stop-opacity:1" />
+                </linearGradient>
+              </defs>
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" fill="url(#heartGradient)" stroke="url(#heartGradient)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Letter Modal -->
+  <dialog class="modal" id="letterModal">
+    <div class="modal-header">
+      <h2 class="modal-title">A letter to <span id="nameInLetter">Shifah</span> 💌</h2>
+    </div>
+    <div class="modal-body">
+      <p>My dearest love,</p>
+      <p>I'm truly sorry for how I spoke last night. You deserve gentleness from me, especially during the difficult moments. I was frustrated, and I let that frustration spill onto you—that wasn't fair, and it wasn't the love you deserve.</p>
+      <p>Thank you for loving me even when I stumble and make mistakes. Your patience means everything to me. I promise to slow down, listen with my whole heart, and make you feel safe and cherished in every conversation we have.</p>
+      <p>I will show my love not just in words, but in the way I speak to you, the way I text you, and the way I stand by your side through everything. You are my person, my heart, my home.</p>
+      <p>If you can find it in your heart to take my hand again, I promise to hold our love with more care and tenderness than ever before. 💕</p>
+      <p style="text-align: right; font-style: italic; margin-top: 2rem;">
+        Forever yours,<br>
+        <span style="font-family: 'Dancing Script', cursive; font-size: 1.3rem; color: #c44569;">Hashim</span>
+      </p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" id="closeLetter">Close</button>
+    </div>
+  </dialog>
+
+  <footer class="footer">
+    Made with patience, honesty, and endless love ✨ — <span class="signature" id="yourName">Hashim</span>
+  </footer>
+
+  <script>
+    // Typewriter animation
+    const typewriterMessages = [
+      "I miss your beautiful laugh already...",
+      "You mean more to me than my pride ever could.",
+      "I'm learning, growing, and I'll do better for us.",
+      "Thank you for being patient with my heart.",
+      "Distance means nothing when love is everything.",
+      "You are my sunshine on the cloudiest days."
+    ];
+    
+    const typewriterEl = document.getElementById('typewriter');
+    let messageIndex = 0;
+    let charIndex = 0;
+    let isDeleting = false;
+    
+    function typeWriter() {
+      const currentMessage = typewriterMessages[messageIndex];
+      
+      if (isDeleting) {
+        typewriterEl.textContent = currentMessage.substring(0, charIndex - 1);
+        charIndex--;
+      } else {
+        typewriterEl.textContent = currentMessage.substring(0, charIndex + 1);
+        charIndex++;
+      }
+      
+      let typeSpeed = isDeleting ? 30 : 60;
+      
+      if (!isDeleting && charIndex === currentMessage.length) {
+        typeSpeed = 2000;
+        isDeleting = true;
+      } else if (isDeleting && charIndex === 0) {
+        isDeleting = false;
+        messageIndex = (messageIndex + 1) % typewriterMessages.length;
+        typeSpeed = 500;
+      }
+      
+      setTimeout(typeWriter, typeSpeed);
+    }
+    
+    // Start typewriter after a delay
+    setTimeout(typeWriter, 1000);
+    
+    // Modal functionality
+    const letterModal = document.getElementById('letterModal');
+    const openLetterBtn = document.getElementById('openLetter');
+    const closeLetterBtn = document.getElementById('closeLetter');
+    
+    openLetterBtn.addEventListener('click', () => {
+      letterModal.showModal();
+    });
+    
+    closeLetterBtn.addEventListener('click', () => {
+      letterModal.close();
+    });
+    
+    letterModal.addEventListener('click', (e) => {
+      if (e.target === letterModal) {
+        letterModal.close();
+      }
+    });
+    
+    // Update name in letter
+    const herName = document.getElementById('herName').textContent;
+    document.getElementById('nameInLetter').textContent = herName;
+    
+    // Floating hearts animation
+    function createFloatingHeart() {
+      const hearts = ['💕', '💖', '💗', '💘', '🌹', '✨'];
+      const heart = document.createElement('div');
+      heart.className = 'floating-heart';
+      heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+      heart.style.left = Math.random() * 100 + '%';
+      heart.style.animationDuration = (Math.random() * 3 + 4) + 's';
+      heart.style.opacity = Math.random() * 0.5 + 0.3;
+      
+      document.getElementById('floatingHearts').appendChild(heart);
+      
+      setTimeout(() => {
+        heart.remove();
+      }, 5000);
+    }
+    
+    // Create floating hearts periodically
+    setInterval(createFloatingHeart, 3000);
+    
+    // Heart burst on forgive button
+    const forgiveBtn = document.getElementById('forgiveBtn');
+    forgiveBtn.addEventListener('click', function(e) {
+      const wa = this.getAttribute('data-wa');
+      
+      // Create heart burst effect
+      for (let i = 0; i < 30; i++) {
+        setTimeout(() => {
+          const heart = document.createElement('div');
+          heart.textContent = ['💕', '💖', '💗', '💘'][Math.floor(Math.random() * 4)];
+          heart.style.position = 'fixed';
+          heart.style.left = e.clientX + (Math.random() - 0.5) * 200 + 'px';
+          heart.style.top = e.clientY + (Math.random() - 0.5) * 200 + 'px';
+          heart.style.fontSize = Math.random() * 20 + 15 + 'px';
+          heart.style.zIndex = '1000';
+          heart.style.pointerEvents = 'none';
+          heart.style.animation = 'floatUp 3s ease-out forwards';
+          
+          document.body.appendChild(heart);
+          
+          setTimeout(() => heart.remove(), 3000);
+        }, i * 50);
+      }
+      
+      // WhatsApp integration
+      if (wa) {
+        const message = encodeURIComponent("My heart forgives you ❤️ Let's talk when you're ready. I love you.");
+        window.open(`https://wa.me/${wa}?text=${message}`, '_blank');
+      }
+    });
+    
+    // Add some initial floating hearts
+    for (let i = 0; i < 5; i++) {
+      setTimeout(createFloatingHeart, i * 1000);
+    }
+  </script>
+</body>
+</html>
