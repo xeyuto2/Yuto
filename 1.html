@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Our Romantic Lounge 💖</title>
+  <meta name="description" content="A dreamy love lounge with realtime chat, typing indicator, love notes, games, and surprise stickers." />
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --rose:#ff4d8d; --rose-2:#ff7ab3; --violet:#8146ff; --night:#0b0718; --glass:rgba(255,255,255,.08);
+      --ink:#141323; --text:#ffffff; --soft:#fef3f8; --gold:#ffd166; --mint:#aef0dc;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;color:var(--text);background: radial-gradient(1200px 700px at 50% -10%, #ff7ab33a 0%, transparent 60%), linear-gradient(120deg,#1b1433,#291a62 45%,#0e0a22); font-family:Poppins, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial}
+
+    .container{max-width:1100px;margin:0 auto;padding:22px}
+    .glass{background:var(--glass);backdrop-filter: blur(10px); border:1px solid #ffffff18; box-shadow: 0 10px 30px #00000060; border-radius:26px}
+
+    /* Header */
+    header{position:relative;z-index:2;padding:70px 16px 26px}
+    .title{font-family:'Dancing Script', cursive; font-size: clamp(40px, 7vw, 82px); text-align:center; line-height:1.1; letter-spacing:.5px}
+    .title .grad{background:linear-gradient(135deg, var(--rose), var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent}
+    .subtitle{text-align:center;opacity:.9;margin-top:6px;font-size:clamp(14px,2vw,18px)}
+
+    /* Floating hearts */
+    .hearts{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+    .heart{position:absolute;opacity:.7;animation:floatUp linear infinite;filter: drop-shadow(0 6px 12px #ff3d6e66)}
+    @keyframes floatUp{0%{transform:translateY(100vh) scale(.7) rotate(0)}100%{transform:translateY(-10vh) scale(1.1) rotate(360deg)}}
+
+    /* Controls bar */
+    .bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:center;margin-top:18px}
+    .input{padding:12px 14px;border-radius:14px;border:1px solid #ffffff2a;background:#ffffff12;color:#fff;min-width:190px}
+    .btn{cursor:pointer;border:none;padding:12px 18px;border-radius:999px;font-weight:700;color:#fff;box-shadow:0 10px 24px #00000055;transition:transform .1s ease}
+    .btn:active{transform:translateY(1px)}
+    .btn-heart{background:radial-gradient(120% 120% at 30% 20%, var(--rose), var(--violet)); position:relative}
+    .btn-ghost{background:transparent;border:1px solid #ffffff3a}
+
+    /* Sections */
+    section{position:relative;z-index:1;margin:18px auto;padding:20px}
+    .grid{display:grid;gap:18px}
+    @media(min-width:980px){.grid-2{grid-template-columns:1.1fr .9fr}}
+
+    /* Chat */
+    .chat-wrap{display:flex;flex-direction:column;height:500px}
+    .chat-log{flex:1;overflow:auto;padding:14px;border-radius:20px;background:#ffffff10;border:1px solid #ffffff28}
+    .bubble{max-width:72%;margin:10px 0;padding:12px 14px;border-radius:22px 22px 10px 22px;background:linear-gradient(135deg,#ffffff,#ffe5f0);color:#2b2436;box-shadow:0 6px 14px #00000030;position:relative}
+    .mine{margin-left:auto;border-radius:22px 22px 22px 10px;background:linear-gradient(135deg,#ff6fb5,#ff3d6e);color:#fff}
+    .meta{font-size:11px;opacity:.85;margin-top:6px}
+    .typing{font-size:12px;opacity:.9;margin:6px 6px 0;color:#ffd6ea}
+    .chat-input{display:flex;gap:10px;margin-top:12px}
+    .chat-input input{flex:1}
+
+    /* Notes Wall */
+    .notes{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
+    .note{background:#fff;color:#1c1830;padding:16px;border-radius:16px;box-shadow:0 14px 24px #00000040;transform:rotate(var(--rot));position:relative}
+    .note h4{margin:0 0 6px;font-family:'Dancing Script',cursive;font-size:26px;color:#e91e63}
+    .note small{opacity:.6}
+    .note .actions{display:flex;gap:8px;margin-top:10px}
+
+    /* Games */
+    .games{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+    .card{padding:16px;border:1px solid #ffffff2a;border-radius:18px;background:#ffffff10}
+    .ttt{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+    .cell{aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;font-size:42px;border-radius:16px;border:1px solid #ffffff40;background:#ffffff12;cursor:pointer;user-select:none;transition:transform .08s}
+    .cell:active{transform:scale(.98)}
+
+    .rps-choices{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    .rps-choices button{border-radius:14px;border:1px solid #ffffff33;background:#ffffff12;color:#fff;padding:10px 14px}
+
+    /* Sticker/Gift Modal */
+    .modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:50}
+    .modal.show{display:flex}
+    .gift{background:#0f0a24;border:1px solid #ffffff2a;border-radius:22px;padding:18px;max-width:520px;width:92%;text-align:center;box-shadow:0 30px 60px #00000080}
+    .gift h3{margin:6px 0 10px;font-family:'Dancing Script',cursive;font-size:38px}
+    .stickerStage{height:260px;display:flex;align-items:center;justify-content:center;overflow:hidden;border-radius:16px;background:linear-gradient(145deg,#1c1336,#2a1f56)}
+
+    /* Animated built‑in stickers */
+    .pulse-heart{width:120px;height:120px;position:relative}
+    .pulse-heart:before, .pulse-heart:after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 30% 30%, #ff9ac5, #ff3d6e);border-radius:20px 20px 0 0;transform:rotate(45deg);}
+    .pulse-heart:after{transform:rotate(45deg) translate(0, 30%)}
+    .pulse-heart{animation:pulse 1.2s ease-in-out infinite}
+    @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+
+    .rose{position:relative;width:120px;height:120px}
+    .rose .petal{position:absolute;left:50%;top:50%;width:18px;height:34px;background:linear-gradient(#ff5fa2,#c71f60);border-radius:18px 18px 0 18px;transform-origin:0 100%;animation:petal .9s ease-out forwards}
+    .rose .petal:nth-child(1){transform:translate(-50%,-50%) rotate(0deg)}
+    .rose .petal:nth-child(2){animation-delay:.1s;transform:translate(-50%,-50%) rotate(30deg)}
+    .rose .petal:nth-child(3){animation-delay:.2s;transform:translate(-50%,-50%) rotate(60deg)}
+    .rose .petal:nth-child(4){animation-delay:.3s;transform:translate(-50%,-50%) rotate(90deg)}
+    @keyframes petal{0%{opacity:0;transform:translate(-50%,-30%) scale(.6) rotate(var(--r,0))}100%{opacity:1;transform:translate(-50%,-50%) scale(1) rotate(var(--r,0))}}
+
+    .teddy{font-size:96px;animation:float 1.6s ease-in-out infinite}
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+
+    /* Footer */
+    footer{opacity:.85;text-align:center;padding:26px}
+    .tiny{font-size:12px;opacity:.75}
+  </style>
+</head>
+<body>
+  <!-- background hearts -->
+  <div class="hearts" id="hearts"></div>
+
+  <header class="container">
+    <div class="glass" style="padding:24px 18px 26px">
+      <h1 class="title">Hi <span id="nameTarget">My Love</span> — welcome to our <span class="grad">Romantic Lounge</span> 💌</h1>
+      <p class="subtitle">Real‑time chat, love notes, cute games, and magical surprise stickers — just for us.</p>
+      <div class="bar">
+        <input id="myName" class="input" placeholder="Your name or nickname" />
+        <input id="roomCode" class="input" placeholder="Room code (e.g. LOVE2025)" />
+        <button id="joinBtn" class="btn btn-heart">Save & Join</button>
+        <button id="personalizeBtn" class="btn btn-ghost">Personalize 💅</button>
+      </div>
+      <p class="tiny" style="text-align:center;margin-top:6px">Both of you must enter the <b>same Room code</b>. Name & code stay on this device.</p>
+    </div>
+  </header>
+
+  <main class="container grid grid-2">
+    <!-- CHAT -->
+    <section class="glass">
+      <h3 style="margin:0 0 10px">💬 Dreamy Chat (Realtime)</h3>
+      <div class="chat-wrap">
+        <div id="chatLog" class="chat-log"></div>
+        <div id="typing" class="typing" style="display:none">Someone is typing…</div>
+        <div class="chat-input">
+          <input id="chatText" class="input" placeholder="Type a sweet message… (Enter to send)"/>
+          <button id="sendBtn" class="btn btn-heart">Send</button>
+        </div>
+      </div>
+      <p class="tiny" style="margin-top:8px">Tip: send a message and watch the floating hearts 💕</p>
+    </section>
+
+    <!-- LOVE NOTES WALL -->
+    <section class="glass">
+      <h3 style="margin:0 0 10px">💌 Love Notes Wall</h3>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+        <input id="noteTitle" class="input" placeholder="Title (e.g., To my moon)" style="flex:1"/>
+        <input id="noteText" class="input" placeholder="Write a short lovely note…" style="flex:2"/>
+        <button id="addNote" class="btn btn-heart">Post</button>
+      </div>
+      <div id="notes" class="notes"></div>
+    </section>
+
+    <!-- GAMES -->
+    <section class="glass" style="grid-column:1/-1">
+      <h3 style="margin:0 0 10px">🎮 Play Together</h3>
+      <div class="games">
+        <div class="card">
+          <h4 style="margin:6px 0">Tic‑Tac‑Toe — Hearts vs Roses</h4>
+          <div id="tttYouAre" class="tiny">Joining…</div>
+          <div id="tttGrid" class="ttt"></div>
+          <div style="display:flex;gap:10px;align-items:center;margin-top:10px;flex-wrap:wrap">
+            <button id="tttReset" class="btn btn-ghost">Reset</button>
+            <span id="tttStatus" class="tiny"></span>
+          </div>
+        </div>
+        <div class="card">
+          <h4 style="margin:6px 0">Rock‑Paper‑Scissors — 💖 ✨ 🌹</h4>
+          <div class="rps-choices">
+            <button data-pick="rock">💖 Rock</button>
+            <button data-pick="paper">✨ Paper</button>
+            <button data-pick="scissors">🌹 Scissors</button>
+          </div>
+          <div id="rpsInfo" class="tiny" style="margin-top:8px">Make a pick…</div>
+          <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+            <button id="rpsReset" class="btn btn-ghost">Reset Round</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SURPRISE GIFTS -->
+    <section class="glass" style="grid-column:1/-1;text-align:center">
+      <h3 style="margin:0 0 10px">🎁 Surprise Gift Box</h3>
+      <p class="tiny" style="margin-top:-4px">Click for a sweet animated sticker surprise!</p>
+      <button id="giftBtn" class="btn btn-heart" style="font-size:18px;padding:14px 22px">Open a Surprise ✨</button>
+    </section>
+  </main>
+
+  <footer>
+    <p class="tiny">Made with ❤️ just for <span id="footerName">you</span>. <span id="year"></span></p>
+  </footer>
+
+  <!-- Modal for gifts -->
+  <div id="giftModal" class="modal">
+    <div class="gift">
+      <h3 id="giftTitle">A little surprise for you 💝</h3>
+      <div class="stickerStage" id="stickerStage"></div>
+      <p id="giftCaption" style="margin:10px 0 12px"></p>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <button id="anotherGift" class="btn btn-heart">Another one!</button>
+        <button id="closeGift" class="btn btn-ghost">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Optional music (user-provided) -->
+  <audio id="bgm" preload="none" src="" crossorigin="anonymous"></audio>
+
+  <!-- Firebase (Compat SDK for simplicity) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
+  <script>
+    // ======= 🔧 PASTE YOUR FIREBASE CONFIG HERE =======
+    // From Firebase Console → Project settings → Your apps → Web
+    // const firebaseConfig = { apiKey:"…", authDomain:"…", databaseURL:"https://<project-id>-default-rtdb.firebaseio.com", projectId:"…", storageBucket:"…", messagingSenderId:"…", appId:"…" };
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT.firebaseapp.com",
+      databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+      projectId: "YOUR_PROJECT",
+      storageBucket: "YOUR_PROJECT.appspot.com",
+      messagingSenderId: "",
+      appId: ""
+    };
+    // ================================================
+
+    let app, db; try{ app = firebase.initializeApp(firebaseConfig); db = firebase.database(); } catch(e){ console.warn('Firebase: paste correct config.', e); }
+
+    // ===== Personalization
+    const STORAGE = { name:'love:name', music:'love:music', myName:'love:myName', room:'love:room', client:'love:client' };
+    const nameTarget = document.getElementById('nameTarget');
+    const footerName = document.getElementById('footerName');
+    const personalBtn = document.getElementById('personalizeBtn');
+    personalBtn.onclick = () => {
+      const cur = localStorage.getItem(STORAGE.name) || 'My Love';
+      const n = prompt("Your partner's name (how you call them)?", cur) || cur;
+      localStorage.setItem(STORAGE.name, n);
+      nameTarget.textContent = n; footerName.textContent = n;
+      const curSong = localStorage.getItem(STORAGE.music) || '';
+      const m = prompt('Optional: paste a direct MP3 URL for background music', curSong);
+      if(m!==null){ localStorage.setItem(STORAGE.music, m); document.getElementById('bgm').src = m; }
+      confetti();
+    };
+    (function(){
+      const n = localStorage.getItem(STORAGE.name); if(n){ nameTarget.textContent = n; footerName.textContent=n; }
+      const m = localStorage.getItem(STORAGE.music); if(m){ document.getElementById('bgm').src = m; }
+      document.getElementById('year').textContent = new Date().getFullYear();
+    })();
+
+    // Hearts background
+    const hearts = document.getElementById('hearts');
+    function spawnHearts(){ for(let i=0;i<24;i++){ const h=document.createElement('div'); h.className='heart'; const size=12+Math.random()*28; h.style.left=Math.random()*100+'vw'; h.style.animationDuration=8+Math.random()*8+'s'; h.style.animationDelay=-Math.random()*16+'s'; h.innerHTML=`<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="url(#g)"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#ff6fb5"/><stop offset="100%" stop-color="#ff3d6e"/></linearGradient></defs><path d="M12 21s-6.716-4.297-9.428-7.01C-1.14 11.571.343 6.857 4.286 6.857 7.09 6.857 8.571 9 12 11.571 15.429 9 16.91 6.857 19.714 6.857c3.943 0 5.426 4.714 1.714 7.133C18.716 16.703 12 21 12 21z"/></svg>`; hearts.appendChild(h);} }
+    spawnHearts();
+
+    // Confetti burst
+    function confetti(){ for(let i=0;i<70;i++){ const p=document.createElement('div'); const size=6+Math.random()*8; p.style.cssText=`position:fixed;left:${Math.random()*100}vw;top:-10px;width:${size}px;height:${size}px;background:hsl(${Math.random()*360} 85% 65%);border-radius:2px;transform:rotate(${Math.random()*360}deg);opacity:.9;z-index:9999;pointer-events:none;`; document.body.appendChild(p); const dx=(Math.random()*2-1)*120; const dy=100+Math.random()*40; const duration=700+Math.random()*600; const start=performance.now(); function tick(t){ const k=(t-start)/duration; if(k>=1){ p.remove(); return;} p.style.transform=`translate(${dx*k}px, ${dy*k}px) rotate(${360*k}deg)`; requestAnimationFrame(tick);} requestAnimationFrame(tick);} }
+
+    // Identity + room join
+    const myNameInput=document.getElementById('myName'); const roomInput=document.getElementById('roomCode'); const joinBtn=document.getElementById('joinBtn');
+    const CLIENT_ID = localStorage.getItem(STORAGE.client) || (()=>{ const id=Math.random().toString(36).slice(2,10); localStorage.setItem(STORAGE.client,id); return id; })();
+    let MY_NAME = localStorage.getItem(STORAGE.myName)||''; let ROOM = localStorage.getItem(STORAGE.room)||''; let roomRef=null;
+    myNameInput.value = MY_NAME; roomInput.value = ROOM;
+
+    function joinRoom(){
+      MY_NAME = myNameInput.value.trim() || 'Me'; ROOM = roomInput.value.trim() || 'LOVE';
+      localStorage.setItem(STORAGE.myName, MY_NAME); localStorage.setItem(STORAGE.room, ROOM);
+      if(!db){ alert('Paste your Firebase config (top of HTML), then reload.'); return; }
+      roomRef = db.ref('rooms/'+ROOM);
+      // presence
+      const presRef = roomRef.child('presence/'+CLIENT_ID);
+      presRef.set({name: MY_NAME, at: firebase.database.ServerValue.TIMESTAMP});
+      presRef.onDisconnect().remove();
+      initChat(); initNotes(); initTTT(); initRPS();
+      confetti();
+    }
+    joinBtn.addEventListener('click', joinRoom);
+    roomInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter') joinRoom(); });
+    myNameInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter') joinRoom(); });
+    if(MY_NAME && ROOM && db){ joinRoom(); }
+
+    // ===== CHAT (with typing indicator) =====
+    const chatLog=document.getElementById('chatLog'); const chatText=document.getElementById('chatText'); const sendBtn=document.getElementById('sendBtn'); const typingEl=document.getElementById('typing');
+    let typingRef=null, typingTimer=null;
+
+    function heartFloat(){ const e=document.createElement('div'); e.style.cssText='position:fixed;left:50%;bottom:80px;transform:translateX(-50%);font-size:28px;opacity:.95;z-index:30'; e.textContent='💞'; document.body.appendChild(e); const start=performance.now(); const dur=1200; function step(t){ const k=(t-start)/dur; if(k>=1){ e.remove(); return;} e.style.transform=`translate(-50%, ${-120*k}px)`; e.style.opacity = String(1-k); requestAnimationFrame(step);} requestAnimationFrame(step); }
+
+    function renderMsg(m){
+      const wrap=document.createElement('div'); const mine=m.senderId===CLIENT_ID; wrap.className='bubble '+(mine?'mine':'');
+      const who = escapeHtml(m.name||'Someone');
+      const time = new Date(m.ts||Date.now()).toLocaleTimeString();
+      wrap.innerHTML = `<div>${escapeHtml(m.text||'')}</div><div class='meta'>${who} • ${time}</div>`;
+      chatLog.appendChild(wrap); chatLog.scrollTop=chatLog.scrollHeight;
+    }
+
+    function initChat(){ if(!roomRef) return; const listRef=roomRef.child('chat');
+      // listen to messages
+      listRef.limitToLast(200).on('child_added', snap=>{ const m=snap.val(); renderMsg(m); });
+
+      // send
+      function send(){ const text=chatText.value.trim(); if(!text) return; listRef.push({ name: MY_NAME, senderId: CLIENT_ID, text, ts: firebase.database.ServerValue.TIMESTAMP }); chatText.value=''; setTyping(false); heartFloat(); }
+      sendBtn.onclick=send; chatText.onkeydown=(e)=>{ if(e.key==='Enter'){ e.preventDefault(); send(); } };
+
+      // typing status
+      typingRef = roomRef.child('typing/'+CLIENT_ID);
+      typingRef.onDisconnect().remove();
+      function setTyping(state){ if(!typingRef) return; if(state){ typingRef.set({name:MY_NAME, typing:true, at: firebase.database.ServerValue.TIMESTAMP}); } else { typingRef.remove(); } }
+      chatText.addEventListener('input', ()=>{
+        const val = chatText.value.trim();
+        if(val){ setTyping(true); if(typingTimer) clearTimeout(typingTimer); typingTimer = setTimeout(()=> setTyping(false), 1500); }
+        else setTyping(false);
+      });
+      // show others typing
+      roomRef.child('typing').on('value', snap=>{
+        const all=snap.val()||{}; const others = Object.entries(all).filter(([id])=> id!==CLIENT_ID).map(([,v])=> v && v.name).filter(Boolean);
+        if(others.length){ typingEl.style.display='block'; typingEl.textContent = (others.length===1? `${others[0]} is typing…` : 'They are typing…'); }
+        else typingEl.style.display='none';
+      });
+    }
+
+    // ===== LOVE NOTES =====
+    const notesEl=document.getElementById('notes'); const addNoteBtn=document.getElementById('addNote'); const noteTitle=document.getElementById('noteTitle'); const noteText=document.getElementById('noteText');
+    function renderNotesList(list){ notesEl.innerHTML=''; Object.entries(list||{}).reverse().forEach(([id,n])=>{ const d=document.createElement('div'); d.className='note'; d.style.setProperty('--rot', (Math.random()*.6 - .3) + 'deg'); d.innerHTML = `<h4>${escapeHtml(n.t||'Untitled')}</h4><div>${escapeHtml(n.x||'')}</div><small>by ${escapeHtml(n.name||'someone')} • ${new Date(n.ts||Date.now()).toLocaleString()}</small><div class='actions'><button class="btn btn-ghost" onclick="deleteNote('${id}')">Delete</button></div>`; notesEl.appendChild(d); }); }
+    function initNotes(){ if(!roomRef) return; const ref=roomRef.child('notes'); ref.on('value', snap=>{ renderNotesList(snap.val()); }); addNoteBtn.onclick = ()=>{ const t=noteTitle.value.trim(); const x=noteText.value.trim(); if(!t && !x) return; ref.push({ t, x, name: MY_NAME, by: CLIENT_ID, ts: firebase.database.ServerValue.TIMESTAMP }); noteText.value=''; confetti(); } }
+    window.deleteNote = function(id){ if(!roomRef) return; if(confirm('Delete this note?')) roomRef.child('notes/'+id).remove(); };
+
+    // ===== TIC TAC TOE =====
+    const tttGrid=document.getElementById('tttGrid'); const tttReset=document.getElementById('tttReset'); const tttStatus=document.getElementById('tttStatus'); const tttYouAre=document.getElementById('tttYouAre');
+    let myRole=null; // 'x' or 'o'
+    function initTTT(){ if(!roomRef) return; const base=roomRef.child('ttt'); const playersRef=base.child('players'); const stateRef=base.child('state');
+      playersRef.transaction(cur=>{ cur=cur||{}; if(cur.x!==CLIENT_ID && cur.o!==CLIENT_ID){ if(!cur.x) cur.x=CLIENT_ID; else if(!cur.o) cur.o=CLIENT_ID; } return cur; }, (err, committed, snap)=>{ const p=snap&&snap.val(); myRole = (p&&p.x===CLIENT_ID)?'x':(p&&p.o===CLIENT_ID)?'o':null; tttYouAre.textContent = myRole? `You are ${myRole==='x'?'❤ (Hearts)':'🌹 (Roses)'} — ${MY_NAME}` : 'Spectating (waiting for a free slot)'; });
+      stateRef.transaction(cur=>{ if(cur) return cur; return { board:Array(9).fill(''), turn:'x', winner:'', draw:false, updated: firebase.database.ServerValue.TIMESTAMP }; });
+      stateRef.on('value', snap=>{ const s=snap.val(); if(!s) return; drawTTT(s); });
+      tttGrid.innerHTML=''; for(let i=0;i<9;i++){ const c=document.createElement('div'); c.className='cell'; c.dataset.i=i; c.onclick=()=> moveTTT(i); tttGrid.appendChild(c); }
+      tttReset.onclick=()=>{ base.set(null); initTTT(); };
+      function moveTTT(i){ stateRef.transaction(cur=>{ if(!cur) return cur; const {board,turn,winner}=cur; const sym=myRole; if(winner || !sym || sym!==turn || board[i]) return cur; const nb=[...board]; nb[i]=sym; const win = winnerTTT(nb); const full = nb.every(v=>v); return { board: nb, turn: sym==='x'?'o':'x', winner: win? sym : '', draw: !win && full, updated: firebase.database.ServerValue.TIMESTAMP }; }); }
+      function drawTTT(s){ const b=s.board||[]; [...tttGrid.children].forEach((c,idx)=>{ const v=b[idx]; c.textContent = v? (v==='x'?'❤':'🌹') : ''; }); if(s.winner){ tttStatus.textContent = (s.winner===myRole)? 'You won! 🎉' : 'They won! 💖'; } else if(s.draw){ tttStatus.textContent='Draw! ☯️'; } else { tttStatus.textContent = (myRole===s.turn)? 'Your turn…' : 'Their turn…'; } }
+      function winnerTTT(b){ const L=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]]; return L.some(([a,c,d])=> b[a]&&b[a]===b[c]&&b[a]===b[d]); }
+    }
+
+    // ===== RPS =====
+    const rpsWrap=document.querySelector('.rps-choices'); const rpsInfo=document.getElementById('rpsInfo'); const rpsReset=document.getElementById('rpsReset');
+    function initRPS(){ if(!roomRef) return; const base=roomRef.child('rps'); const picksRef=base.child('picks'); const resultRef=base.child('result');
+      picksRef.off(); resultRef.off();
+      rpsWrap.querySelectorAll('button').forEach(btn=>{ btn.onclick=()=> pick(btn.dataset.pick); });
+      rpsReset.onclick=()=>{ picksRef.set(null); resultRef.set(null); rpsInfo.textContent='Make a pick…'; };
+      picksRef.on('value', snap=>{ const picks=snap.val()||{}; const mine=picks[CLIENT_ID]; const otherId=Object.keys(picks).find(k=>k!==CLIENT_ID); if(mine){ rpsInfo.textContent = `You picked ${label(mine)}. Waiting…`; } if(mine && otherId && picks[otherId]){ if(CLIENT_ID < otherId){ const outcome=decide(mine, picks[otherId]); resultRef.set({ a:mine, b:picks[otherId], winner: outcome, at: firebase.database.ServerValue.TIMESTAMP }); } }
+      });
+      resultRef.on('value', snap=>{ const r=snap.val(); if(!r) return; const text = r.winner==='draw'? `You ${label(r.a)} vs ${label(r.b)} Them — Draw!` : (r.winner==='a'? `You ${label(r.a)} beat ${label(r.b)} 🎉` : `They ${label(r.b)} beat ${label(r.a)} 😅`); rpsInfo.textContent=text; });
+      function label(x){ return x==='rock'?'💖 Rock': x==='paper'?'✨ Paper':'🌹 Scissors'; }
+      function pick(choice){ picksRef.child(CLIENT_ID).set(choice); }
+      function decide(a,b){ if(a===b) return 'draw'; if((a==='rock'&&b==='scissors')||(a==='paper'&&b==='rock')||(a==='scissors'&&b==='paper')) return 'a'; return 'b'; }
+    }
+
+    // ===== Surprise Stickers (built‑in & free) =====
+    const giftBtn=document.getElementById('giftBtn'); const giftModal=document.getElementById('giftModal'); const stickerStage=document.getElementById('stickerStage'); const giftTitle=document.getElementById('giftTitle'); const giftCaption=document.getElementById('giftCaption'); const closeGift=document.getElementById('closeGift'); const anotherGift=document.getElementById('anotherGift');
+    const STICKERS = [
+      { type:'heart', title:'My heart for you', caption:'It beats a little faster when I think of you 💓' },
+      { type:'rose', title:'A rose for my rose', caption:'You make my world bloom 🌹✨' },
+      { type:'teddy', title:'A warm hug', caption:'If I could, I’d hug you right now 🧸💞' },
+    ];
+    function showSticker(){ const s = STICKERS[Math.floor(Math.random()*STICKERS.length)]; giftTitle.textContent = s.title; giftCaption.textContent = s.caption; stickerStage.innerHTML=''; let el; if(s.type==='heart'){ el=document.createElement('div'); el.className='pulse-heart'; } else if(s.type==='rose'){ el=document.createElement('div'); el.className='rose'; for(let i=1;i<=4;i++){ const p=document.createElement('div'); p.className='petal'; p.style.setProperty('--r', (i-1)*30+'deg'); el.appendChild(p);} } else { el=document.createElement('div'); el.className='teddy'; el.textContent='🧸'; } stickerStage.appendChild(el); giftModal.classList.add('show'); }
+    giftBtn.onclick = ()=>{ showSticker(); };
+    anotherGift.onclick = ()=>{ showSticker(); };
+    closeGift.onclick = ()=> giftModal.classList.remove('show');
+    giftModal.addEventListener('click', e=>{ if(e.target===giftModal) giftModal.classList.remove('show'); });
+
+    // Utils
+    function escapeHtml(s){ return (s||'').replace(/[&<>\"']/g, m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m])); }
+  </script>
+</body>
+</html>
