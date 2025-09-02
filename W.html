@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Yuto ULTRA Prediction — Meta Sniper</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  :root{ --bg:#000; --panel:#0b0b0b; --text:#e9e9e9; --muted:#9a9a9a; --border:#1e1e1e; --accentA:#00ffd5; --accentB:#2b6cff; --accentC:#ff3bd4; }
+  *{box-sizing:border-box} html,body{height:100%}
+  body{margin:20px;background:var(--bg);color:var(--text);font-family:Poppins,sans-serif}
+  h1{margin:0 0 12px;text-align:center;font-weight:600;font-size:2rem;background:linear-gradient(135deg,var(--accentA),var(--accentB),var(--accentC));background-size:200% 200%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:titleShift 6s ease infinite}
+  label{display:block;text-align:center;margin-bottom:12px;color:var(--muted);font-weight:600}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .panel{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:16px;margin-top:18px;box-shadow:0 0 24px rgba(0,255,213,0.06);animation:fadeIn 400ms ease}
+  .panel h3{margin:0 0 10px;font-weight:600}
+  .entry{display:flex;gap:10px;align-items:center;margin-bottom:10px}
+  .entry:nth-last-child(-n+3) input{box-shadow:0 0 5px rgba(0,255,213,0.2)}
+  input[type="number"]{width:94px;padding:10px 12px;border-radius:10px;background:#0f0f0f;color:var(--text);border:1px solid var(--border);outline:none;transition:border-color .2s,box-shadow .2s}
+  input[type="number"]:focus{border-color:var(--accentB);box-shadow:0 0 0 4px rgba(43,108,255,.12)}
+  .auto-info{font-size:13px;color:var(--muted)}
+  button{background:linear-gradient(135deg,var(--accentA),var(--accentB));background-size:200% 200%;color:#061318;border:none;padding:10px 16px;border-radius:12px;font-weight:700;cursor:pointer;transition:transform .16s,box-shadow .2s,background-position .5s}
+  button:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(0,255,213,.22);background-position:100% 0}
+  .btn-secondary{background:linear-gradient(135deg,#1b1b1b,#121212);color:var(--text);border:1px solid var(--border)}
+  .btn-secondary:hover{box-shadow:0 6px 20px rgba(255,255,255,.06)}
+  select{background:#0f0f0f;color:var(--text);border:1px solid var(--border);border-radius:10px;padding:10px 12px}
+  .bar{background:#111;border-radius:8px;overflow:hidden;height:10px;margin-top:10px;border:1px solid #151515}
+  .bar-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--accentA),var(--accentB));transition:width .45s ease}
+  #grid{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+  .cell{width:56px;height:56px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:#070707;border:1px solid #141414;font-weight:700;font-size:14px;flex-direction:column}
+  .score{font-size:11px;color:var(--muted);font-weight:600;margin-top:4px}
+  .primary{outline:2px solid rgba(0,255,213,.12);box-shadow:0 6px 20px rgba(0,255,213,.06)}
+  .top3{display:flex;gap:12px;justify-content:center;margin-top:10px}
+  .top3 .card{padding:8px 12px;border-radius:10px;background:#090909;border:1px solid #141414;min-width:110px;text-align:center}
+  pre.reason{white-space:pre-wrap;color:var(--muted);font-size:13px;margin-top:10px;max-height:320px;overflow:auto;background:transparent;border-left:1px solid #101010;padding-left:8px}
+  .badge{display:inline-block;padding:4px 8px;border-radius:999px;border:1px solid #1a1a1a;background:#0a0a0a;color:var(--muted);font-size:12px;margin-left:6px}
+  .tooltip{position:relative;display:inline-block}
+  .tooltip .tooltiptext{visibility:hidden;width:200px;background:#1a1a1a;color:var(--text);text-align:center;border-radius:8px;padding:8px;font-size:12px;position:absolute;z-index:1;bottom:125%;left:50%;margin-left:-100px;opacity:0;transition:opacity 0.3s}
+  .tooltip:hover .tooltiptext{visibility:visible;opacity:1}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes titleShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+  @media(max-width:600px){.entry{flex-direction:column;align-items:flex-start}input[type="number"]{width:100%}.cell{width:48px;height:48px}.row{justify-content:center}}
+</style>
+</head>
+<body>
+
+<h1>Yuto ULTRA Prediction 🔮</h1>
+<label><input type="checkbox" id="autoPredict" aria-label="Toggle auto prediction"> Auto Predict</label>
+
+<div id="inputs" class="panel">
+  <h3>Enter latest numbers (0–9) — newest last
+    <span class="badge">Strategy:
+      <select id="strategy" aria-label="Select prediction strategy">
+        <option value="balanced" selected>Balanced</option>
+        <option value="conservative">Conservative</option>
+        <option value="aggressive">Aggressive</option>
+      </select>
+    </span>
+  </h3>
+  <div class="row" id="inputRows"></div>
+  <div style="margin-top:12px" class="row">
+    <button id="predictBtn" onclick="predict()" aria-label="Generate ULTRA Prediction">ULTRA Prediction</button>
+    <button class="btn-secondary" onclick="clearInputs()" aria-label="Clear all inputs">Clear</button>
+    <button class="btn-secondary" onclick="loadSample()" aria-label="Load sample data">Load Sample</button>
+    <button class="btn-secondary" onclick="toggleSettings()" aria-label="Toggle settings">Settings</button>
+    <button class="btn-secondary" onclick="copyPrediction()" aria-label="Copy prediction to clipboard">Copy Prediction</button>
+    <button class="btn-secondary" onclick="simulateTest()" aria-label="Simulate test rounds">Quick Test</button>
+  </div>
+  <div id="settings" style="display:none;margin-top:10px;color:var(--muted);font-size:13px">
+    <label class="tooltip"><input type="checkbox" id="useAdaptive" checked> Use Adaptive Model Weighting
+      <span class="tooltiptext">Adjusts model influence based on past accuracy</span></label>
+    <label class="tooltip"><input type="checkbox" id="useDynamicSelection" checked> Dynamic Model Selection
+      <span class="tooltiptext">Selects models based on data quality</span></label>
+    <label class="tooltip"><input type="checkbox" id="useGameMechanics" checked> Game-specific tweaks
+      <span class="tooltiptext">Applies Wingo-specific biases (e.g., Violet/Green)</span></label>
+  </div>
+</div>
+
+<div id="output" class="panel">
+  <h3>🔮 Result <span id="dqBadge" class="badge">Data Quality: —</span></h3>
+  <div id="primary"></div>
+  <div class="top3" id="top3"></div>
+  <div id="grid" aria-hidden="false"></div>
+  <p id="confidence" style="text-align:center;margin-top:8px;color:var(--muted)"></p>
+  <div class="bar"><div class="bar-fill" id="barFill"></div></div>
+  <h3 style="margin-top:14px">🧾 Reasoning</h3>
+  <pre class="reason" id="reasonText">No prediction yet. Enter 20+ real Wingo results for best accuracy.</pre>
+  <canvas id="modelChart" style="margin-top:10px; max-height:200px"></canvas>
+</div>
+
+<div class="panel" id="tracker">
+  <h3>📊 Accuracy Tracker</h3>
+  <p id="stats"><b>Total:</b> 0 | <b>Wins:</b> 0 | <b>Losses:</b> 0 | <b>Win Rate:</b> 0%</p>
+  <div class="row">
+    <button class="btn-secondary" onclick="markResult(true)" aria-label="Mark prediction as win">✅ Win</button>
+    <button class="btn-secondary" onclick="markResult(false)" aria-label="Mark prediction as loss">❌ Loss</button>
+    <button class="btn-secondary" onclick="resetLearning()" aria-label="Reset learning data">Reset Learning</button>
+  </div>
+</div>
+
+<div class="panel" id="history">
+  <h3>📜 Prediction History</h3>
+  <div id="historyLog"></div>
+  <div class="row" style="margin-top:8px">
+    <button class="btn-secondary" onclick="exportHistory()" aria-label="Export history as CSV">📁 Export History</button>
+    <button class="btn-secondary" onclick="importHistory()" aria-label="Import history from CSV">📥 Import History</button>
+    <button class="btn-secondary" onclick="clearHistory()" aria-label="Clear prediction history">🗑 Clear History</button>
+  </div>
+</div>
+
+<script>
+/* ---------- Basic helpers ---------- */
+function getColor(num){ if(num===0||num===5) return "VIOLET"; if([2,4,6,8].includes(num)) return "RED"; return "GREEN"; }
+function getSize(num){ return num>=5 ? "BIG":"SMALL"; }
+function getParity(num){ return num%2===0 ? "EVEN":"ODD"; }
+function clamp(v,a,b){ return Math.max(a,Math.min(b,v)); }
+function sum(a){ return a.reduce((x,y)=>x+y,0); }
+function mean(a){ return a.length? sum(a)/a.length : 0; }
+function entropy(p){ let e=0; for(const x of p){ if(x>0) e-= x*Math.log2(x);} return e; }
+function indexOfMax(a){ return a.indexOf(Math.max(...a)); }
+
+/* ---------- Cache for performance ---------- */
+let freqCache = null;
+let lastInputHash = null;
+function frequencyAnalysis(nums){
+  const hash = nums.join(",");
+  if (hash === lastInputHash && freqCache) return freqCache;
+  const f = Array(10).fill(0); nums.forEach(n=>f[n]++);
+  freqCache = f; lastInputHash = hash;
+  return f;
+}
+
+/* ---------- UI build ---------- */
+const inputRows=document.getElementById('inputRows');
+for(let i=0;i<20;i++){
+  const el=document.createElement('div'); el.className='entry';
+  el.innerHTML=`<input type="number" min="0" max="9" id="num${i}" placeholder="${(i+1)%20}" oninput="updateInfo(${i})" aria-label="Number input for position ${(i+1)%20}">
+                <div class="auto-info" id="info${i}">Color: — | Size: —</div>`;
+  inputRows.appendChild(el);
+}
+function toggleSettings(){
+  const s=document.getElementById('settings'); s.style.display = s.style.display==='none' ? 'block':'none';
+}
+
+/* ---------- State ---------- */
+let historyData=[]; let lastPrediction=null; let total=0,wins=0,losses=0;
+let modelAcc = {};
+let overallAcc = {wins:0,total:0};
+try {
+  modelAcc = JSON.parse(localStorage.getItem('yuto_model_acc') || '{}');
+  overallAcc = JSON.parse(localStorage.getItem('yuto_overall_acc') || '{"wins":0,"total":0}');
+  historyData = JSON.parse(localStorage.getItem('yuto_history') || '[]');
+  const savedInputs = localStorage.getItem('yuto_inputs');
+  if(savedInputs){
+    const inputs = savedInputs.split(',').map(Number);
+    for(let i=0;i<Math.min(inputs.length,20);i++){ document.getElementById(`num${i}`).value=inputs[i]; updateInfo(i); }
+  }
+} catch (e) {
+  console.error("Invalid localStorage data, resetting...");
+  localStorage.removeItem('yuto_model_acc');
+  localStorage.removeItem('yuto_overall_acc');
+  localStorage.removeItem('yuto_inputs');
+  localStorage.removeItem('yuto_history');
+}
+
+/* ---------- Input helpers ---------- */
+let debounceTimeout;
+function updateInfo(i){
+  clearTimeout(debounceTimeout);
+  debounceTimeout = setTimeout(() => {
+    const input=document.getElementById(`num${i}`);
+    const val=parseInt(input.value);
+    const info=document.getElementById(`info${i}`);
+    if(isNaN(val)||val<0||val>9){
+      info.textContent="Color: — | Size: —";
+      input.style.borderColor="crimson";
+      return;
+    }
+    info.textContent=`Color: ${getColor(val)} | Size: ${getSize(val)}`;
+    input.style.borderColor="var(--border)";
+    for(let j=i+1;j<20;j++){
+      const ni=document.getElementById(`num${j}`);
+      if(ni && ni.value===''){ ni.focus(); break; }
+    }
+    if(document.getElementById('autoPredict').checked) predict();
+    saveInputs();
+  }, 300);
+}
+function saveInputs(){
+  const nums = getEnteredHistory();
+  localStorage.setItem('yuto_inputs', nums.join(','));
+}
+function getEnteredHistory(){
+  const arr=[]; for(let i=0;i<20;i++){ const v=document.getElementById(`num${i}`).value; if(v!=='') arr.push(parseInt(v)); }
+  return arr;
+}
+function clearInputs(){
+  for(let i=0;i<20;i++){
+    const el=document.getElementById(`num${i}`);
+    if(el){
+      el.value=''; document.getElementById(`info${i}`).textContent="Color: — | Size: —";
+      el.style.borderColor="var(--border)";
+    }
+  }
+  document.getElementById('reasonText').textContent='Cleared inputs. Enter 20+ real Wingo results for best accuracy.';
+  freqCache = null; lastInputHash = null;
+  localStorage.removeItem('yuto_inputs');
+}
+function loadSample(){
+  const sample=[7,0,9,6,3,4,1,8,2,5,4,3,2,1,0,9,8,7,6,5]; // Extended real-like Wingo sequence
+  for(let i=0;i<20;i++){ document.getElementById(`num${i}`).value=sample[i]; updateInfo(i); }
+}
+if (!localStorage.getItem("yuto_visited")) {
+  loadSample();
+  localStorage.setItem("yuto_visited", "true");
+}
+
+/* ---------- Simulate Test Rounds ---------- */
+function simulateTest(){
+  const nums = getEnteredHistory();
+  if(nums.length<10){
+    alert("Enter at least 10 real Wingo numbers before simulating.");
+    return;
+  }
+  const simResults = [];
+  const biasProbs = [0.15, 0.12, 0.08, 0.12, 0.08, 0.15, 0.08, 0.12, 0.08, 0.12]; // Violet/Green bias
+  for(let i=0;i<50;i++){
+    let rand, r=Math.random(), cum=0;
+    for(let j=0;j<10;j++){ cum+=biasProbs[j]; if(r<cum){ rand=j; break; } }
+    simResults.push({input:[...nums, rand].slice(-20), actual:rand});
+  }
+  let correct = 0, colorCorrect = 0;
+  simResults.forEach(({input, actual}) => {
+    const models = computeModelContrib(input);
+    const aggregate = Array(10).fill(0);
+    for(const name in models){
+      const w = baseWeights[name] || 1;
+      for(let j=0;j<10;j++) aggregate[j] += models[name][j] * w;
+    }
+    const probs = infoGainAdjustment(aggregate);
+    const pred = probs.indexOf(Math.max(...probs));
+    if(pred===actual) correct++;
+    if(getColor(pred)===getColor(actual)) colorCorrect++;
+  });
+  alert(`Simulated 50 rounds.\nNumber Accuracy: ${correct}/50 (${(correct/50*100).toFixed(1)}%)\nColor Accuracy: ${colorCorrect}/50 (${(colorCorrect/50*100).toFixed(1)}%)`);
+}
+
+/* ---------- Feature: Data Quality Assessment ---------- */
+function assessDataQuality(nums){
+  const freq=frequencyAnalysis(nums);
+  const totalDigits = nums.length || 1;
+  const probs=freq.map(f=>f/totalDigits);
+  const H=entropy(probs)/Math.log2(10);
+  let maxStreak=1, cur=1;
+  for(let i=1;i<nums.length;i++){
+    if(nums[i]===nums[i-1]) cur++; else { maxStreak=Math.max(maxStreak,cur); cur=1; }
+  }
+  const streakScore=clamp((maxStreak-1)/5,0,1);
+  let repeat2=0; for(let i=0;i+2<=nums.length-1;i++){ if(nums[i]===nums[i+2]) repeat2++; }
+  const ngramStrength = clamp(repeat2/(nums.length||1),0,1);
+  const patternStrength = clamp((1-H)*0.6 + streakScore*0.25 + ngramStrength*0.15, 0, 1);
+  const quality = patternStrength;
+  let label = quality>0.66?'High': quality>0.33?'Medium':'Low';
+  const isOutlier = maxStreak >= nums.length && nums.length >= 10;
+  if (H > 0.95) label = 'Random (Low Predictability)';
+  if (nums.length < 10) label = 'Too Short (Low Predictability)';
+  return {quality, label, H, patternStrength, streak:maxStreak, isOutlier};
+}
+
+/* ---------- Core classic modules ---------- */
+function buildNgramCounts(nums,Nmax=10){ const counts={}; for(let n=2;n<=Nmax;n++){ counts[n]={};
+  for(let i=0;i+n<nums.length;i++){ const key=nums.slice(i,i+n).join(','); const next=nums[i+n]; if(!counts[n][key]) counts[n][key]=Array(10).fill(0); counts[n][key][next]++; } }
+  return counts; }
+function exponentialNgramPredict(nums,Nmax=10){ const counts=buildNgramCounts(nums,Nmax); const scores=Array(10).fill(0);
+  const last=nums.slice(Math.max(0,nums.length-Nmax));
+  for(let n=Nmax;n>=2;n--){ const key=last.slice(last.length-n).join(','); if(key && counts[n] && counts[n][key]){ const arr=counts[n][key]; const t=sum(arr)||1; const w=Math.pow(2,n-2); for(let i=0;i<10;i++) scores[i]+= w*(arr[i]/t); } }
+  return scores; }
+function analyzeCycles(nums){ const s=Array(10).fill(0); const L=nums.length; if(L<4) return s; for(let p=1;p<=5;p++){ let m=0; for(let i=0;i+p<nums.length;i++){ if(nums[i]===nums[i+p]) m++; } if(m>=2){ const idx=nums.length-p; if(idx>=0){ const c=nums[idx]; s[c]+=1+m*0.6; } } } return s; }
+function neuralLikeScores(nums){ const s=Array(10).fill(0); const L=nums.length;
+  for(let len=2;len<=4;len++){ for(let i=0;i+len<=L-1;i++){ const pat=nums.slice(i,i+len).join(',');
+    for(let j=i+1;j+len<=L-1;j++){ const p2=nums.slice(j,j+len).join(','); if(pat===p2){ s[nums[i+len]]+=0.6; s[nums[j+len]]+=0.6; } } } }
+  const tailLen=Math.min(4,L-1); const tail=nums.slice(L-tailLen);
+  for(let i=0;i+tailLen<=L-1;i++){ const cand=nums.slice(i,i+tailLen); let m=0; for(let k=0;k<tailLen;k++) if(cand[k]===tail[k]) m++; if(m>=Math.max(1,Math.floor(tailLen*0.6))){ s[nums[i+tailLen]]+=0.8*(m/tailLen); } }
+  return s; }
+function positionalPatterns(nums){
+  const pos=Array(10).fill(0); const L=nums.length; if(L<3) return pos;
+  for(let start=0;start<Math.min(4,L-1);start++){ const seq=[]; for(let i=start;i<L;i+=4) seq.push(nums[i]); if(seq.length>=2){ const diffs=[]; for(let i=1;i<seq.length;i++) diffs.push((seq[i]-seq[i-1]+10)%10); const d=Math.round(mean(diffs)); const cand=(seq[seq.length-1]+d)%10; pos[cand]+=1.2; } }
+  const offsetCounts={}; for(let i=0;i<L;i++){ const k=`${i%4}:${nums[i]}`; offsetCounts[k]=(offsetCounts[k]||0)+1; }
+  for(const k in offsetCounts){ const n=parseInt(k.split(':')[1]); pos[n]+=clamp(offsetCounts[k]*0.25,0,1.5); }
+  return pos;
+}
+function harmonicBalancing(freq){ const total=sum(freq)||1; const avg=total/10; const h=Array(10).fill(0); for(let i=0;i<10;i++){ const deficit=Math.max(0,avg-freq[i]); h[i]=1+(deficit/(avg+1))*0.8; } return h; }
+function statisticalDeviationAnalysis(nums){ const f=frequencyAnalysis(nums); const avg=mean(f); const s=Array(10).fill(0); for(let i=0;i<10;i++){ const d=f[i]-avg; s[i]-=clamp(d*0.12,0,2.0);} return s; }
+function gapAnalysis(nums){ const gaps=Array(10).fill(0), last=Array(10).fill(-1); for(let i=0;i<nums.length;i++){ const n=nums[i]; if(last[n]!==-1){ const g=i-last[n]; gaps[n]=gaps[n]? (gaps[n]+g)/2 : g; } last[n]=i; }
+  const s=Array(10).fill(0); const avg=mean(gaps.filter(x=>x>0)); for(let i=0;i<10;i++){ if(gaps[i]>0){ const r=avg?gaps[i]/avg:1; if(r>1.1) s[i]+=clamp((r-1)*0.9,0,1.5); } else s[i]+=0.4; } return s; }
+function hotColdAnalysis(nums){ const f=frequencyAnalysis(nums); const s=Array(10).fill(0); const mx=Math.max(...f); for(let i=0;i<10;i++){ const r=mx?f[i]/mx:0; s[i]+=clamp((1-r)*1.2,0,1.5);} return s; }
+function buildTransitionMatrices(nums){
+  const colorMap={},sizeMap={},parityMap={};
+  for(let i=0;i<nums.length-1;i++){ const a=nums[i],b=nums[i+1]; const ca=getColor(a),cb=getColor(b); const sa=getSize(a),sb=getSize(b); const pa=getParity(a),pb=getParity(b);
+    colorMap[ca]=colorMap[ca]||{}; colorMap[ca][cb]=(colorMap[ca][cb]||0)+1;
+    sizeMap[sa]=sizeMap[sa]||{}; sizeMap[sa][sb]=(sizeMap[sa][sb]||0)+1;
+    parityMap[pa]=parityMap[pa]||{}; parityMap[pa][pb]=(parityMap[pa][pb]||0)+1;
+  }
+  const colorToNums={'RED':[2,4,6,8,0,5],'GREEN':[1,3,7,9,0,5],'VIOLET':[0,5]};
+  const sizeToNums={'BIG':[5,6,7,8,9],'SMALL':[0,1,2,3,4]};
+  const s=Array(10).fill(0); const lastN=nums[nums.length-1]; const lastColor=getColor(lastN), lastSize=getSize(lastN), lastParity=getParity(lastN);
+  function apply(map, state, mapping, w){ if(!map[state]) return; const t=sum(Object.values(map[state]));
+    for(const k in map[state]){ const p=map[state][k]/(t||1); const cand=mapping[k]||[]; for(const c of cand) s[c]+= p*w/cand.length; } }
+  apply(colorMap,lastColor,colorToNums,1.2); apply(sizeMap,lastSize,sizeToNums,1.0);
+  if(parityMap[lastParity]){ const t=sum(Object.values(parityMap[lastParity]));
+    for(const k in parityMap[lastParity]){ const p=parityMap[lastParity][k]/(t||1); for(let n=0;n<10;n++){ if(getParity(n)===k) s[n]+= p*0.6/5; } } }
+  return s;
+}
+function positionalPatternsWrapper(nums){ return positionalPatterns(nums); }
+function mathPatternScores(nums){
+  const s=Array(10).fill(0);
+  if(nums.length>=3){ const a=nums[nums.length-3],b=nums[nums.length-2],c=nums[nums.length-1];
+    if(((a+b)%10)===c){ s[(b+c)%10]+=2.2; }
+    const d1=(b-a+10)%10, d2=(c-b+10)%10;
+    if(d1===d2) s[(c+d2)%10]+=1.8; else s[(c+Math.round((d1+d2)/2))%10]+=0.8;
+    if(a!==0 && b!==0){ const r1=b/a, r2=c/b; if(Math.abs(r1-r2)<0.5){ const r=Math.round((r1+r2)/2); const cand=Math.round((c*r)%10); if(!isNaN(cand)) s[cand]+=1.2; } }
+  }
+  return s;
+}
+function chaosAttractorScores(nums){
+  const s=Array(10).fill(0); const L=nums.length; if(L<4) return s; const win=4; const last=nums.slice(L-win);
+  for(let i=0;i+win<=L-win;i++){ const w=nums.slice(i,i+win); let sim=0; for(let j=0;j<win;j++) if(w[j]===last[j]) sim++;
+    if(sim>=3){ const idx=i+win; if(idx<nums.length){ const nx=nums[idx]; s[nx]+=1.3+(sim-3)*0.6; } }
+    if(sim>=2){ const nx=nums[i+win]; if(nx!==undefined){ s[(nx+1)%10]+=0.4; s[(nx+9)%10]+=0.4; } }
+  } return s;
+}
+function multiDimensionalState(nums){ const m=Array(10).fill(0); const t=buildTransitionMatrices(nums); for(let n=0;n<10;n++) m[n]+=t[n]||0; const p=positionalPatterns(nums); for(let n=0;n<10;n++) m[n]+=p[n]*0.8; return m; }
+function antiClusteringScore(nums){ const s=Array(10).fill(0.5); for(let i=0;i<nums.length;i++){ const n=nums[i]; let rep=0; for(let j=Math.max(0,i-3); j<=Math.min(nums.length-1,i+3); j++){ if(j!==i && nums[j]===n) rep++; } s[n]-=clamp(rep*0.08,0,0.4); } return s; }
+function infoGainAdjustment(raw){ const t=sum(raw)||1; const p=raw.map(x=>Math.max(0,x)/t); const e=entropy(p); const adj=p.map(v=>Math.pow(v+1e-9, 1+(1-(e/Math.log2(10)))*0.6)); const t2=sum(adj)||1; return adj.map(a=>a/t2); }
+function calculateModelConsensus(scores){ const sorted=[...scores].map((s,i)=>({i,s})).sort((a,b)=>b.s-a.s); const top=sorted.slice(0,3).map(x=>x.i); return 1-((scores[top[0]]-scores[top[1]])/(Math.max(...scores)||1)); }
+
+/* ---------- Recency-Weighted Model ---------- */
+function recencyWeightedScores(nums){
+  const s=Array(10).fill(0); const L=nums.length;
+  for(let i=0;i<L;i++){ const weight=Math.exp(-0.1*(L-1-i)); s[nums[i]]+=weight*0.5; }
+  return s;
+}
+
+/* ---------- Enhanced RNG Bias Model ---------- */
+function rngBiasScores(nums){
+  const s = Array(10).fill(0);
+  [1,3,7,9].forEach(n => s[n] += 0.55); // Green boost
+  [0,5].forEach(n => s[n] += 0.75); // Violet boost
+  return s;
+}
+
+/* ---------- Pattern Recognition Enhancement ---------- */
+function analyzeAdvancedPatterns(nums){
+  const s=Array(10).fill(0); const L=nums.length; if(L<3) return s;
+  const last3=nums.slice(-3); const last5=nums.slice(-5);
+  if(last3[0]===last3[2]){ const a=last3[0], b=last3[1]; s[(b+a)%10]+=1.0; }
+  if(L>=5 && last5[0]===last5[4] && last5[1]===last5[3]){ s[(last5[2]+last5[1])%10]+=1.0; }
+  let asc=0, desc=0; for(let i=L-1;i>=1;i--){ const d=(nums[i]-nums[i-1]+10)%10; if(d===1) asc++; else break; }
+  for(let i=L-1;i>=1;i--){ const d=(nums[i-1]-nums[i]+10)%10; if(d===1) desc++; else break; }
+  if(asc>=2) s[(nums[L-1]+1)%10]+=1.1; if(desc>=2) s[(nums[L-1]+9)%10]+=1.1;
+  let alt=1; for(let i=L-1;i>=1;i--){ if(getParity(nums[i])!==getParity(nums[i-1])) alt++; else break; }
+  if(alt>=3){ for(let n=0;n<10;n++){ if(getParity(n)!==getParity(nums[L-1])) s[n]+=0.5/5; } }
+  if(L>=3){ const a=nums[L-3], b=nums[L-2], c=nums[L-1]; const cand=(a+b+c)%10; s[cand]+=0.8; }
+  return s;
+}
+
+/* ---------- Time-Series Analysis ---------- */
+function analyzeTrends(nums){
+  const s=Array(10).fill(0); const L=nums.length; if(L<3) return s;
+  const sma = mean(nums.slice(-3)); const lma = mean(nums.slice(-6));
+  const delta = ((sma - lma)+10)%10;
+  s[Math.round((nums[L-1] + Math.round(delta))%10)] += 0.8;
+  const d1=(nums[L-1]-nums[L-2]+10)%10; const d2=(nums[L-2]-nums[L-3]+10)%10;
+  const mom = Math.round((d1*0.6 + d2*0.4))%10;
+  s[(nums[L-1]+mom)%10] += 0.9;
+  const idx=(L)%5; const bucketCounts={}; for(let i=idx;i<L;i+=5){ const n=nums[i]; bucketCounts[n]=(bucketCounts[n]||0)+1; }
+  let best=-1,bscore=0; for(const k in bucketCounts){ if(bucketCounts[k]>bscore){ bscore=bucketCounts[k]; best=parseInt(k);} }
+  if(best>=0) s[best]+=0.7;
+  return s;
+}
+
+/* ---------- Game-Specific Learning ---------- */
+function analyzeGameMechanics(nums){
+  const s=Array(10).fill(0);
+  const useGM=document.getElementById('useGameMechanics')?.checked;
+  if(!useGM) return s;
+  const last=nums[nums.length-1]; s[last]-=0.4;
+  const f=frequencyAnalysis(nums); const avg=mean(f);
+  if(f[0]<avg) s[0]+=0.45; if(f[5]<avg) s[5]+=0.45; // Violet bias
+  return s;
+}
+
+/* ---------- Streak Patterns ---------- */
+function analyzeStreakPatterns(nums){
+  const s=Array(10).fill(0); const L=nums.length; if(L<2) return s;
+  let count=1; for(let i=L-1;i>=1;i--){ if(nums[i]===nums[i-1]) count++; else break; }
+  if(count>=2){ s[nums[L-1]] += 0.6 * Math.min(count,4); s[(nums[L-1]+1)%10] += 0.3; s[(nums[L-1]+9)%10] += 0.3; }
+  let cst=1; for(let i=L-1;i>=1;i--){ if(getColor(nums[i])===getColor(nums[i-1])) cst++; else break; }
+  if(cst>=3){ for(let n=0;n<10;n++){ if(getColor(n)!==getColor(nums[L-1])) s[n]+=0.5/8; } }
+  return s;
+}
+
+/* ---------- Weighted Ensemble Learning ---------- */
+function adaptiveModelWeighting(predContrib, recentAcc){
+  const weights={}; const names=Object.keys(predContrib);
+  let maxRate=0;
+  for(const name of names){
+    const rec=recentAcc[name]||{wins:0,total:0};
+    const rate = rec.total ? rec.wins/rec.total : 0.5;
+    maxRate=Math.max(maxRate, rate);
+    weights[name]=0.6 + rate*0.8;
+  }
+  if(maxRate>0){ for(const k of names){ weights[k] = weights[k] * (0.9 + 0.2*( (recentAcc[k]?.wins/(recentAcc[k]?.total||1)) / maxRate )); } }
+  return weights;
+}
+
+/* ---------- Confidence Calibration ---------- */
+function calibrateConfidence(probs, historicalAccuracy, modelAgreement, dataQuality){
+  const top = [...probs].sort((a,b)=>b-a).slice(0,3);
+  const spread = top[0] - (top[1]||0);
+  const prior = historicalAccuracy.total ? (historicalAccuracy.wins/historicalAccuracy.total) : 0.55;
+  const base = 70 + (top[0]*25) + (spread*10);
+  const agreeBoost = modelAgreement*8;
+  const priorBoost = (prior-0.5)*20;
+  const qualityBoost = (dataQuality.quality-0.5)*18;
+  return clamp(base + agreeBoost + priorBoost + qualityBoost, 65, 95);
+}
+
+/* ---------- Time & Cross-Validation ---------- */
+function validateModels(historicalSeq){
+  if(historicalSeq.length<15) return null;
+  const acc={};
+  function bump(name,win){ acc[name]=acc[name]||{wins:0,total:0}; acc[name].total++; if(win) acc[name].wins++; }
+  for(let k=10;k<historicalSeq.length-1;k++){
+    const window = historicalSeq.slice(0,k);
+    const models = computeModelContrib(window);
+    const next = historicalSeq[k];
+    for(const name in models){
+      const arr=models[name]; const ranked=[...arr].map((s,i)=>({i,s})).sort((a,b)=>b.s-a.s).slice(0,3).map(x=>x.i);
+      bump(name, ranked.includes(next));
+    }
+  }
+  return acc;
+}
+
+/* ---------- Trend & Advanced patterns wrappers ---------- */
+function analyzeTrendsWrapper(nums){ return analyzeTrends(nums); }
+function analyzeAdvancedPatternsWrapper(nums){ return analyzeAdvancedPatterns(nums); }
+
+/* ---------- Model contribution calculator ---------- */
+function computeModelContrib(nums){
+  return {
+    NGRAM: exponentialNgramPredict(nums,10),
+    CYCLES: analyzeCycles(nums),
+    NEURAL: neuralLikeScores(nums),
+    POSITIONAL: positionalPatternsWrapper(nums),
+    STAT_DEV: statisticalDeviationAnalysis(nums),
+    GAP: gapAnalysis(nums),
+    HOTCOLD: hotColdAnalysis(nums),
+    TRANSITIONS: buildTransitionMatrices(nums),
+    MATH: mathPatternScores(nums),
+    CHAOS: chaosAttractorScores(nums),
+    MULTIDIM: multiDimensionalState(nums),
+    ADVANCED: analyzeAdvancedPatternsWrapper(nums),
+    TRENDS: analyzeTrendsWrapper(nums),
+    STREAKS: analyzeStreakPatterns(nums),
+    GAME: analyzeGameMechanics(nums),
+    RECENCY: recencyWeightedScores(nums),
+    RNG_BIAS: rngBiasScores(nums)
+  };
+}
+
+/* ---------- Dynamic Model Selection ---------- */
+function selectModels(models, dataQ){
+  const selected={};
+  const dq = dataQ.quality;
+  for(const name in models){
+    let keep=true;
+    if(dq<0.33 && ['CHAOS','NEURAL','ADVANCED'].includes(name)) keep=false;
+    if(models[name].every(x=>x===0)) keep=false;
+    if(keep) selected[name]=models[name];
+  }
+  return selected;
+}
+
+/* ---------- Model Chart Rendering ---------- */
+function renderModelChart(models, weights){
+  const ctx = document.getElementById("modelChart").getContext("2d");
+  const modelNames = Object.keys(models);
+  const contributions = modelNames.map(name => {
+    const arr = models[name];
+    const w = weights[name] || 1;
+    return sum(arr.map(s => s * w)) / (sum(arr) || 1);
+  });
+  new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: modelNames,
+      datasets: [{
+        label: "Model Contribution",
+        data: contributions,
+        backgroundColor: "rgba(0, 255, 213, 0.6)",
+        borderColor: "var(--accentA)",
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: { y: { beginAtZero: true, title: { display: true, text: "Contribution Score" } } },
+      plugins: { legend: { display: false } }
+    }
+  });
+}
+
+/* ---------- Prediction main ---------- */
+function predict(){
+  try {
+    const raw=getEnteredHistory();
+    const primaryBox=document.getElementById('primary');
+    const grid=document.getElementById('grid');
+    const strategy = document.getElementById('strategy').value;
+
+    if(raw.length<10){ throw new Error("Please enter at least 10 real Wingo numbers for better accuracy."); }
+
+    const nums=raw.slice();
+    const dataQ=assessDataQuality(nums);
+    document.getElementById('dqBadge').textContent = `Data Quality: ${dataQ.label}`;
+    if(dataQ.isOutlier || dataQ.H > 0.95 || nums.length < 10){
+      document.getElementById('reasonText').textContent = `Warning: Input sequence is too short, random, or highly repetitive. Collect 20+ real Wingo results (e.g., from 66 Lottery or Tiranga Games) for better accuracy.`;
+    }
+
+    let models = computeModelContrib(nums);
+    if(document.getElementById('useDynamicSelection')?.checked){
+      models = selectModels(models, dataQ);
+    }
+
+    let baseWeights={
+      NGRAM:2.7, CYCLES:1.8, NEURAL:1.5, POSITIONAL:1.6, STAT_DEV:1.2, GAP:1.4, HOTCOLD:1.0,
+      TRANSITIONS:1.9, MATH:1.5, CHAOS:1.1, MULTIDIM:1.8, ADVANCED:1.7, TRENDS:1.6, STREAKS:1.5, GAME:1.3, RECENCY:1.4, RNG_BIAS:1.6
+    };
+
+    if(strategy==='conservative'){
+      baseWeights = Object.fromEntries(Object.entries(baseWeights).map(([k,v])=>[k,
+        v * (['NGRAM','TRANSITIONS','POSITIONAL','MULTIDIM','STAT_DEV'].includes(k)?1.3:0.7)
+      ]));
+    } else if(strategy==='aggressive'){
+      baseWeights = Object.fromEntries(Object.entries(baseWeights).map(([k,v])=>[k,
+        v * (['CHAOS','NEURAL','ADVANCED','TRENDS','STREAKS','HOTCOLD','RECENCY'].includes(k)?1.3:0.8)
+      ]));
+    }
+
+    let adaptMultipliers = {};
+    if(document.getElementById('useAdaptive')?.checked){
+      adaptMultipliers = adaptiveModelWeighting(models, modelAcc);
+    } else {
+      for(const k in models) adaptMultipliers[k]=1;
+    }
+
+    let aggregate=Array(10).fill(0);
+    const reasonLines=[];
+    for(const name in models){
+      const w = (baseWeights[name]||1) * (adaptMultipliers[name]||1);
+      const arr=models[name];
+      for(let i=0;i<10;i++) aggregate[i]+= (arr[i]||0)*w;
+      reasonLines.push(`${name}: weight ${w.toFixed(2)}`);
+    }
+
+    const harmonic = harmonicBalancing(frequencyAnalysis(nums));
+    const anti = antiClusteringScore(nums);
+    for(let i=0;i<10;i++){ aggregate[i] = Math.max(0, aggregate[i]) * harmonic[i] * anti[i]; }
+
+    const probs = infoGainAdjustment(aggregate);
+    const consensus = calculateModelConsensus(aggregate);
+    const confidence = calibrateConfidence(probs, overallAcc, consensus, dataQ);
+
+    const ranked = probs.map((p,i)=>({i,p})).sort((a,b)=>b.p-a.p);
+    const top3 = ranked.slice(0,3);
+    const bestNum = top3[0].i;
+
+    document.getElementById('primary').innerHTML =
+      `<p style="text-align:center;font-size:18px;margin:6px 0;">
+         <b>Primary Number:</b> <span style="font-size:20px">${bestNum}</span>
+         <span class="badge">${strategy}</span>
+       </p>
+       <p style="text-align:center;"><b>Color:</b> ${getColor(bestNum)} | <b>Size:</b> ${getSize(bestNum)} | <b>Parity:</b> ${getParity(bestNum)}</p>`;
+    const top3Div=document.getElementById('top3'); top3Div.innerHTML='';
+    for(const t of top3){ top3Div.innerHTML += `<div class="card"><div style="font-size:18px">${t.i}</div><div class="score">${(t.p*100).toFixed(2)}%</div></div>`; }
+    grid.innerHTML=''; for(let n=0;n<10;n++){ const el=document.createElement('div'); el.className='cell'+(n===bestNum?' primary':''); el.innerHTML=`<div>${n}</div><div class="score">${(probs[n]*100).toFixed(1)}%</div>`; grid.appendChild(el); }
+
+    const reasonsDetailed=[];
+    reasonsDetailed.push(`Inputs (${nums.length}): ${nums.join(', ')}`);
+    reasonsDetailed.push(`Top 3: ${top3.map(t=>`${t.i} (${(t.p*100).toFixed(2)}%)`).join(' | ')}`);
+    reasonsDetailed.push(`Confidence: ${confidence.toFixed(1)}%  |  Consensus: ${consensus.toFixed(3)}  |  DataQ: ${dataQ.label} (H=${dataQ.H.toFixed(2)}, pattern=${dataQ.patternStrength.toFixed(2)})`);
+    reasonsDetailed.push('');
+    reasonsDetailed.push('Model weights:'); reasonsDetailed.push(...reasonLines);
+    const ngramTop = models.NGRAM ? models.NGRAM.map((s,i)=>({i,s})).sort((a,b)=>b.s-a.s)[0] : null;
+    if(ngramTop && ngramTop.s>0) reasonsDetailed.push(`• N-gram suggests ${ngramTop.i}`);
+    const trendTop = models.TRENDS ? models.TRENDS.map((s,i)=>({i,s})).sort((a,b)=>b.s-a.s)[0] : null;
+    if(trendTop && trendTop.s>0) reasonsDetailed.push(`• Trend points to ${trendTop.i}`);
+    const advTop = models.ADVANCED ? models.ADVANCED.map((s,i)=>({i,s})).sort((a,b)=>b.s-a.s)[0] : null;
+    if(advTop && advTop.s>0) reasonsDetailed.push(`• Advanced patterns favor ${advTop.i}`);
+    const recencyTop = models.RECENCY ? models.RECENCY.map((s,i)=>({i,s})).sort((a,b)=>b.s-a.s)[0] : null;
+    if(recencyTop && recencyTop.s>0) reasonsDetailed.push(`• Recency favors ${recencyTop.i}`);
+    const rngBiasTop = models.RNG_BIAS ? models.RNG_BIAS.map((s,i)=>({i,s})).sort((a,b)=>b.s-a.s)[0] : null;
+    if(rngBiasTop && rngBiasTop.s>0) reasonsDetailed.push(`• RNG Bias favors ${rngBiasTop.i} (Violet/Green bias)`);
+    document.getElementById('reasonText').textContent = reasonsDetailed.join('\n');
+
+    document.getElementById('confidence').textContent = `Confidence: ${confidence.toFixed(1)}%`;
+    document.getElementById('barFill').style.width = `${confidence}%`;
+
+    renderModelChart(models, Object.assign({}, baseWeights, adaptMultipliers));
+
+    const entry = {
+      timestamp:new Date().toISOString(),
+      inputs:nums.join(','), primary:bestNum, top3:top3.map(t=>t.i).join(','),
+      probs:probs.map(p=>p.toFixed(4)).join(';'), confidence:confidence.toFixed(1),
+      strategy, modelsTop: Object.fromEntries(Object.entries(models).map(([k,v])=>{
+        const idx=[...v].map((s,i)=>({i,s})).sort((a,b)=>b.s-a.s).slice(0,3).map(x=>x.i);
+        return [k, idx];
+      }))
+    };
+    historyData.push(entry);
+    localStorage.setItem('yuto_history', JSON.stringify(historyData));
+    updateHistory();
+    lastPrediction = { number:bestNum, probs, confidence, modelsTop:entry.modelsTop };
+
+    // Prompt for actual result immediately
+    setTimeout(() => {
+      const actual = prompt('Enter actual Wingo result number (0-9) to improve predictions:', '');
+      if(actual !== null) markResult(actual === bestNum.toString(), actual);
+    }, 1000);
+  } catch (e) {
+    document.getElementById('reasonText').textContent = `Error: ${e.message}\nEnter 20+ real Wingo results for best accuracy.`;
+    document.getElementById('primary').innerHTML = `<p style="text-align:center;color:crimson">${e.message}</p>`;
+    console.error(e);
+  }
+}
+
+/* ---------- Learning from results ---------- */
+function markResult(win, actual){
+  if(!lastPrediction || !historyData.length) return;
+  total++; if(win) wins++; else losses++;
+  const rate=((wins/total)*100).toFixed(2);
+  document.getElementById('stats').innerHTML=`<b>Total:</b> ${total} | <b>Wins:</b> ${wins} | <b>Losses:</b> ${losses} | <b>Win Rate:</b> ${rate}%`;
+  historyData[historyData.length-1].outcome = win ? 'WIN':'LOSS';
+  const val = actual===null ? null : parseInt(actual);
+  if(val!==null && !isNaN(val) && val>=0 && val<=9){
+    const latest = historyData[historyData.length-1];
+    for(const name in latest.modelsTop){
+      const hit = latest.modelsTop[name].includes(val);
+      modelAcc[name]=modelAcc[name]||{wins:0,total:0};
+      modelAcc[name].total++; if(hit) modelAcc[name].wins++;
+    }
+    overallAcc.total++; if(win) overallAcc.wins++;
+    localStorage.setItem('yuto_model_acc', JSON.stringify(modelAcc));
+    localStorage.setItem('yuto_overall_acc', JSON.stringify(overallAcc));
+  }
+  localStorage.setItem('yuto_history', JSON.stringify(historyData));
+  updateHistory();
+}
+function resetLearning(){
+  if(confirm("Are you sure you want to reset all learning data? This cannot be undone.")){
+    modelAcc={}; overallAcc={wins:0,total:0};
+    localStorage.removeItem('yuto_model_acc');
+    localStorage.removeItem('yuto_overall_acc');
+    total=0; wins=0; losses=0;
+    document.getElementById('stats').innerHTML=`<b>Total:</b> 0 | <b>Wins:</b> 0 | <b>Losses:</b> 0 | <b>Win Rate:</b> 0%`;
+    alert("Adaptive learning reset.");
+  }
+}
+
+/* ---------- History & export ---------- */
+function updateHistory(){
+  const log=document.getElementById('historyLog'); log.innerHTML='';
+  historyData.slice(-50).reverse().forEach(h=>{
+    const el=document.createElement('div'); el.style.padding='6px 0'; el.style.borderBottom='1px solid #101010';
+    el.innerHTML = `<div><b>${h.primary}</b> [${h.top3}] — ${h.confidence}% — ${h.timestamp.split('T')[0]} ${h.timestamp.split('T')[1].split('.')[0]} ${h.outcome? ' | '+h.outcome:''}</div>
+                    <div style="color:var(--muted);font-size:12px">in:${h.inputs}</div>`;
+    log.appendChild(el);
+  });
+}
+function exportHistory(){
+  let csv="timestamp,inputs,primary,top3,probs,confidence,strategy,outcome\n";
+  for(const h of historyData){ csv+=`"${h.timestamp}","${h.inputs}",${h.primary},"${h.top3}","${h.probs}",${h.confidence},"${h.strategy||''}","${h.outcome||''}"\n`; }
+  const blob=new Blob([csv],{type:'text/csv'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='yuto_ultra_history.csv'; a.click(); URL.revokeObjectURL(url);
+}
+function importHistory(){
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = ".csv";
+  input.onchange = (e) => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const text = event.target.result;
+        const rows = text.split("\n").slice(1).filter(row => row.trim());
+        historyData = rows.map(row => {
+          const [timestamp, inputs, primary, top3, probs, confidence, strategy, outcome] = row.split(",");
+          return {
+            timestamp: timestamp.replace(/"/g, ""),
+            inputs: inputs.replace(/"/g, ""),
+            primary: parseInt(primary),
+            top3: top3.replace(/"/g, ""),
+            probs: probs.replace(/"/g, ""),
+            confidence: parseFloat(confidence),
+            strategy: strategy.replace(/"/g, ""),
+            outcome: outcome.replace(/"/g, ""),
+            modelsTop: {}
+          };
+        });
+        localStorage.setItem('yuto_history', JSON.stringify(historyData));
+        updateHistory();
+        alert("History imported successfully!");
+      } catch (e) {
+        alert("Error importing history: Invalid CSV format.");
+        console.error(e);
+      }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+function clearHistory(){
+  if(confirm("Are you sure you want to clear the prediction history?")) {
+    historyData = [];
+    localStorage.setItem('yuto_history', JSON.stringify(historyData));
+    updateHistory();
+    alert("Prediction history cleared.");
+  }
+}
+function copyPrediction(){
+  const primary = document.getElementById("primary").textContent;
+  const top3 = document.getElementById("top3").textContent;
+  navigator.clipboard.writeText(`Prediction: ${primary}\nTop 3: ${top3}`)
+    .then(() => alert("Prediction copied to clipboard!"))
+    .catch(() => alert("Failed to copy prediction."));
+}
+
+/* ---------- Keyboard: Enter to predict ---------- */
+document.addEventListener('keydown',(e)=>{ if(e.key==='Enter'){ const f=document.activeElement; if(f && f.tagName==='INPUT') predict(); }});
+</script>
+</body>
+</html>
