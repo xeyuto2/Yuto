@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>My Heart, For Shifa ❤️</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cinzel:wght@400;700&family=Poppins:wght@300;400&display=swap');
+
+:root {
+  --primary: #d90429;
+  --dark: #1a0005;
+  /* Richer Gold Palette */
+  --gold-rich: #c4972a;
+  --gold-light: #fceabb;
+  --gold-shadow: #8a6a1c;
+  /* Cake */
+  --sponge-light: #ffe0e9;
+  --sponge-dark: #f0c0cd;
+  --jam: #ff5c8a;
+  --icing-main: #ff0a54;
+  --icing-shiny: #ff3377;
+}
+
+body {
+  margin: 0; padding: 0; min-height: 100vh;
+  background: radial-gradient(circle at center, #2e020c, #000000);
+  font-family: 'Poppins', sans-serif; overflow: hidden;
+  display: flex; justify-content: center; align-items: center; color: white;
+  cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="pink"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>'), auto;
+}
+
+/* --- BACKGROUND MAGIC --- */
+.firefly {
+  position: absolute; width: 3px; height: 3px; background-color: var(--gold-light);
+  border-radius: 50%; box-shadow: 0 0 10px var(--gold-light), 0 0 20px var(--gold-rich);
+  animation: fly 12s linear infinite; pointer-events: none; z-index: 1;
+}
+@keyframes fly { 0% { opacity: 0; } 50% { opacity: 0.8; } 100% { transform: translate(100px, -100vh); opacity: 0; } }
+
+.touch-heart {
+  position: absolute; width: 15px; height: 15px; background: #ff0a54;
+  transform: rotate(45deg); pointer-events: none; animation: floatUp 1.5s ease-out forwards; z-index: 1000; filter: drop-shadow(0 0 5px #ff0a54);
+}
+.touch-heart::before, .touch-heart::after { content: ''; position: absolute; width: 15px; height: 15px; background: #ff0a54; border-radius: 50%; }
+.touch-heart::before { top: -7.5px; left: 0; } .touch-heart::after { top: 0; left: -7.5px; }
+@keyframes floatUp { 0% { transform: scale(1) translateY(0) rotate(45deg); opacity: 0.8; } 100% { transform: scale(2) translateY(-100px) rotate(45deg); opacity: 0; } }
+
+/* --- NAVIGATION & COMMON --- */
+.screen {
+  position: absolute; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center;
+  transition: all 1s ease-in-out; opacity: 0; pointer-events: none; z-index: 10; transform: scale(1.1); filter: blur(10px);
+}
+.screen.active { opacity: 1; pointer-events: all; transform: scale(1); filter: blur(0); }
+.next-btn { margin-top: 30px; background: linear-gradient(45deg, #d90429, #ff0a54); border: 1px solid var(--gold-rich); padding: 12px 30px; border-radius: 30px; color: white; cursor: pointer; box-shadow: 0 0 20px rgba(217, 4, 41, 0.5); font-family: 'Cinzel', serif; transition: 0.3s; }
+.next-btn:hover { transform: scale(1.05); box-shadow: 0 0 30px var(--gold-rich); background: var(--gold-rich); }
+
+/* --- S1: INTRO --- */
+.intro-text { font-family: 'Cinzel', serif; color: var(--gold-light); margin-bottom: 30px; letter-spacing: 4px; animation: pulse 3s infinite; text-shadow: 0 0 15px rgba(212, 175, 55, 0.8); font-size: 20px; }
+.gift-box { font-size: 100px; filter: drop-shadow(0 0 30px rgba(255,215,0,0.6)); animation: shake 2.5s infinite; cursor: pointer; transition: 0.3s; }
+.gift-box:hover { transform: scale(1.1); }
+@keyframes shake { 0%, 100% { transform: rotate(0); } 10%, 30%, 50%, 70%, 90% { transform: rotate(-3deg); } 20%, 40%, 60%, 80% { transform: rotate(3deg); } }
+@keyframes pulse { 0%,100%{opacity:0.7; transform: scale(1);} 50%{opacity:1; transform: scale(1.05);} }
+
+/* --- S2: DEEP NOTES --- */
+.glass-card {
+  background: rgba(40, 0, 10, 0.6); backdrop-filter: blur(25px);
+  border: 2px solid var(--gold-rich); border-radius: 25px; padding: 40px;
+  width: 85%; max-width: 450px; text-align: center; box-shadow: 0 0 60px rgba(217, 4, 41, 0.4), inset 0 0 20px rgba(255, 215, 0, 0.1);
+}
+h1 { font-family: 'Great Vibes', cursive; font-size: 50px; margin: 0; background: linear-gradient(to right, var(--gold-rich), var(--gold-light), var(--gold-rich)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 5px var(--gold-shadow)); }
+#note-display { min-height:80px; font-style:italic; font-size:16px; margin:25px 0; color: var(--gold-light); text-shadow: 1px 1px 2px black; line-height: 1.4; }
+.gem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+.gem-btn { 
+  background: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(0,0,0,0.2)); 
+  border: 1px solid var(--gold-rich); color: var(--gold-light); padding: 15px; border-radius: 12px; 
+  cursor: pointer; transition: 0.4s; font-family: 'Cinzel', serif; font-size: 12px;
+}
+.gem-btn:hover { background: rgba(212, 175, 55, 0.3); box-shadow: 0 0 15px var(--gold-rich); transform: translateY(-3px); }
+
+/* --- S3: REALISTIC CAKE (Kept previous version) --- */
+.cake-container { position: relative; width: 220px; height: 160px; margin-top: 40px; cursor: pointer; transition: 0.5s; }
+.cake-body {
+  position: absolute; bottom: 0; width: 100%; height: 110px;
+  border-radius: 10px; display: flex; justify-content: center;
+  background: linear-gradient(to right, var(--sponge-dark), var(--sponge-light), var(--sponge-dark));
+  box-shadow: inset 0 -45px 0 -40px var(--jam), 0 10px 20px rgba(0,0,0,0.5);
+}
+.icing {
+  position: absolute; top: -5px; width: 102%; left: -1%; height: 50px;
+  background: linear-gradient(to bottom, var(--icing-shiny), var(--icing-main));
+  border-radius: 15px 15px 10px 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.3), inset 0 2px 5px rgba(255,255,255,0.4); z-index: 2;
+}
+.candle { position: absolute; top: -35px; left: 50%; transform: translateX(-50%); width: 12px; height: 35px; background: linear-gradient(to right, #ff9966, #ff5e62); border-radius: 2px; z-index: 5; transition: opacity 0.5s; box-shadow: inset -2px 0 5px rgba(0,0,0,0.2); }
+.flame { position: absolute; top: -18px; left: 50%; transform: translateX(-50%); width: 14px; height: 20px; background: radial-gradient(ellipse at bottom, yellow, orange, orangered); border-radius: 50% 50% 20% 20%; box-shadow: 0 0 20px yellow; animation: flicker 0.6s infinite alternate; }
+@keyframes flicker { from{transform:translateX(-50%) scale(1); opacity:1} to{transform:translateX(-50%) scale(1.1); opacity:0.8} }
+.cake-container.cut .cake-body { clip-path: polygon(0 0, 45% 0, 45% 100%, 0 100%); }
+.cake-container.cut::after {
+  content:''; position: absolute; top:0; right:0; width: 45%; height:110px;
+  background: linear-gradient(to right, var(--sponge-dark), var(--sponge-light)); box-shadow: inset 0 -45px 0 -40px var(--jam);
+  border-radius: 10px; transform: rotate(10deg) translate(25px, 10px);
+}
+.cake-msg { opacity: 0; transform: translateY(20px); transition: 1s; font-family: 'Great Vibes'; font-size: 30px; color: var(--gold-light); margin-top: 30px; text-shadow: 0 0 10px var(--gold-rich); }
+.cake-container.cut + .cake-msg { opacity: 1; transform: translateY(0); }
+
+/* --- S4: THE ULTIMATE ROYAL LOCKET --- */
+.locket-container { perspective: 1000px; width: 240px; height: 240px; cursor: pointer; position: relative; margin-top: 30px; filter: drop-shadow(0 20px 30px rgba(0,0,0,0.8)); }
+
+/* The Chain Loop & Hinge */
+.locket-top-detail {
+  position: absolute; top: -30px; left: 50%; transform: translateX(-50%); width: 60px; height: 40px;
+  background: conic-gradient(from 90deg, var(--gold-rich), var(--gold-light), var(--gold-shadow), var(--gold-rich));
+  border-radius: 20px 20px 0 0; z-index: 0;
+  box-shadow: inset 0 -5px 10px rgba(0,0,0,0.8);
+}
+
+.locket { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); z-index: 1; }
+.locket.open { transform: rotateY(180deg); }
+
+.locket-front, .locket-back { position: absolute; width: 100%; height: 100%; border-radius: 50%; backface-visibility: hidden; display: flex; justify-content: center; align-items: center; }
+
+/* Locket Front - Engraved Gold with Diamond Halo */
+.locket-front {
+  /* Complex reflective gold */
+  background: 
+    radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4) 0%, transparent 30%), /* Highlight */
+    conic-gradient(from 45deg, var(--gold-rich), var(--gold-light), var(--gold-shadow), var(--gold-rich), var(--gold-light)); /* Base Metal */
+  border: 8px solid var(--gold-rich);
+  /* Deep, heavy 3D shadows */
+  box-shadow: 
+    inset 0 0 40px rgba(0,0,0,0.6),
+    inset 0 0 10px var(--gold-light),
+    0 0 0 5px var(--gold-shadow); /* Outer rim definition */
+  /* Subtle engraving pattern overlay */
+  background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%238a6a1c' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+}
+
+/* Diamond Halo Effect using border dots */
+.locket-front::before {
+    content: ''; position: absolute; top: 5px; left: 5px; right: 5px; bottom: 5px;
+    border-radius: 50%;
+    border: 3px dotted rgba(255, 255, 255, 0.7); /* Tiny diamonds */
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8), inset 0 0 10px rgba(255,255,255,0.8);
+}
+
+.locket-front::after { 
+  content: 'Tap to Open'; font-family: 'Cinzel'; font-size: 16px; color: #5c4002; font-weight: 700; 
+  text-shadow: 1px 1px 0px rgba(255,255,255,0.6), -1px -1px 1px rgba(0,0,0,0.8); z-index: 2;
+}
+
+/* Locket Back - Red Velvet Interior */
+.locket-back { 
+  /* Red Velvet Gradient */
+  background: radial-gradient(circle, #800020, #3d0014);
+  transform: rotateY(180deg); overflow: hidden; border: 10px solid var(--gold-rich); 
+  box-shadow: inset 0 0 30px rgba(0,0,0,0.8);
+}
+.locket-photo { 
+  width: 90%; height: 90%; object-fit: cover; border-radius: 50%; 
+  border: 4px solid var(--gold-rich);
+  box-shadow: inset 0 0 20px rgba(0,0,0,1), 0 0 10px rgba(0,0,0,0.5);
+}
+
+/* --- S5: FINALE --- */
+.final-text { font-family: 'Great Vibes'; font-size: 65px; background: linear-gradient(to bottom, #ff0a54, #ffccd5); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: float 3s infinite; filter: drop-shadow(0 0 10px #ff0a54); }
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-20px)} }
+</style>
+</head>
+<body>
+
+<audio id="loveSong" loop>
+  <source src="https://www.bensound.com/bensound-music/bensound-love.mp3" type="audio/mpeg">
+</audio>
+
+<div class="screen active" id="s1">
+  <div class="intro-text">My Dearest Shifa</div>
+  <div class="gift-box" onclick="nextScreen(2)">🎁</div>
+  <p style="color: var(--gold-shadow); margin-top: 20px; font-size: 12px;">(Tap the gift to begin)</p>
+</div>
+
+<div class="screen" id="s2">
+  <div class="glass-card">
+    <h1>My World, Shifa</h1>
+    <p id="note-display">"Before you, my world was just black and white. You are the color, the light, and the music of my life."</p>
+    <div class="gem-grid">
+      <button class="gem-btn" onclick="typeWriter('My life was ordinary until you became my everything. You are my true miracle. ✨')">✨ My Miracle</button>
+      <button class="gem-btn" onclick="typeWriter('I don’t need gifts. Your love is the only treasure my soul will ever desire. 💖')">💖 My Treasure</button>
+      <button class="gem-btn" onclick="typeWriter('Not just for now, not just for a lifetime. My soul is tied to yours for eternity. ♾️')">♾️ Eternity</button>
+      <button class="gem-btn" onclick="typeWriter('In every heartbeat, I hear your name. You own every single part of me. 🫀')">🫀 My Heartbeat</button>
+    </div>
+    <button class="next-btn" onclick="nextScreen(3)">Our Celebration 🎂</button>
+  </div>
+</div>
+
+<div class="screen" id="s3">
+  <h2 style="font-family:'Cinzel'; color:var(--gold-light); text-shadow: 0 0 10px var(--gold-rich);">Make a Wish, My Love</h2>
+  <div class="cake-container" onclick="cutCake(this)">
+    <div class="candle"><div class="flame"></div></div>
+    <div class="cake-body"><div class="icing"></div></div>
+  </div>
+  <div class="cake-msg">Merry Christmas, My Everything!</div>
+  <button class="next-btn" id="locket-btn" style="opacity:0; pointer-events:none; margin-top:30px;" onclick="nextScreen(4)">Your Final Gift ➡️</button>
+</div>
+
+<div class="screen" id="s4">
+  <h2 style="font-family:'Cinzel'; color: var(--gold-light); margin-bottom:20px; text-shadow: 0 0 10px var(--gold-rich);">My Heart is Yours to Keep</h2>
+  <div class="locket-container" onclick="openLocket(this)">
+    <div class="locket-top-detail"></div>
+    <div class="locket">
+      <div class="locket-front"></div>
+      <div class="locket-back">
+        <img src="https://i.ibb.co/SXYvFZGq/IMG-20251203-124228017-HDR-PORTRAIT.jpg" class="locket-photo" alt="Us">
+      </div>
+    </div>
+  </div>
+  <button class="next-btn" id="final-btn" style="opacity:0; margin-top:60px;" onclick="nextScreen(5)">Forever & Always</button>
+</div>
+
+<div class="screen" id="s5">
+  <div class="final-text">I Love You Shifa</div>
+  <p style="color: #ffccd5; margin-top: 30px; font-size: 18px; font-family: 'Cinzel';">You are my end and my beginning.</p>
+</div>
+
+<script>
+// --- NAVIGATION ---
+function nextScreen(n) {
+  document.querySelector('.active').classList.remove('active');
+  document.getElementById('s' + n).classList.add('active');
+  
+  if(n === 2) {
+    document.getElementById('loveSong').volume = 0.6;
+    document.getElementById('loveSong').play().catch(e=>console.log(e));
+    createBurst(20);
+  }
+}
+
+// --- MAGIC TOUCH (HEARTS & SPARKS) ---
+document.addEventListener('mousemove', function(e) { if(Math.random()>0.7) createHeart(e.clientX, e.clientY); });
+document.addEventListener('click', function(e) { createHeart(e.clientX, e.clientY); createBurst(5, e.clientX, e.clientY); });
+
+function createHeart(x, y) {
+  const heart = document.createElement('div');
+  heart.className = 'touch-heart'; heart.style.left = x + 'px'; heart.style.top = y + 'px';
+  document.body.appendChild(heart); setTimeout(() => heart.remove(), 1500);
+}
+
+// --- TYPING ---
+let typeTimeout;
+function typeWriter(text) {
+  const display = document.getElementById('note-display');
+  display.innerHTML = "";
+  if(typeTimeout) clearTimeout(typeTimeout);
+  let i = 0;
+  function type() {
+    if(i < text.length) { display.innerHTML += text.charAt(i); i++; typeTimeout = setTimeout(type, 50); }
+  }
+  type();
+}
+
+// --- CAKE LOGIC ---
+function cutCake(el) {
+  if(el.classList.contains('cut')) return;
+  el.classList.add('cut'); createBurst(50);
+  setTimeout(() => {
+    document.getElementById('locket-btn').style.opacity = 1;
+    document.getElementById('locket-btn').style.pointerEvents = 'all';
+  }, 1000);
+}
+
+// --- LOCKET LOGIC ---
+function openLocket(el) {
+  el.querySelector('.locket').classList.toggle('open');
+  createBurst(40);
+  // Play a subtle magic sound if desired (optional addition)
+  // const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3'); audio.volume=0.3; audio.play();
+  setTimeout(() => { document.getElementById('final-btn').style.opacity = 1; }, 1500);
+}
+
+// --- BURST EFFECT (Confetti + Gold Dust) ---
+function createBurst(n, x=window.innerWidth/2, y=window.innerHeight/2) {
+  for(let i=0; i<n; i++) {
+    const bit = document.createElement('div');
+    const isGold = Math.random() > 0.6;
+    const size = Math.random() * 6 + 2;
+    bit.style.cssText = `position:fixed; width:${size}px; height:${size}px; background:${isGold ? 'var(--gold-light)' : '#ff0a54'}; left:${x}px; top:${y}px; border-radius:50%; pointer-events:none; z-index:999; transition:1s cubic-bezier(0.1, 1, 0.1, 1); box-shadow: 0 0 ${isGold?10:5}px ${isGold?'var(--gold-rich)':''}`;
+    document.body.appendChild(bit);
+    setTimeout(() => {
+      const angle = Math.random() * Math.PI * 2;
+      const dist = Math.random() * 150 + 50;
+      bit.style.transform = `translate(${Math.cos(angle)*dist}px, ${Math.sin(angle)*dist}px) scale(0)`;
+      bit.style.opacity = 0;
+    }, 10);
+    setTimeout(() => bit.remove(), 1000);
+  }
+}
+
+// --- BACKGROUND FIREFLIES ---
+setInterval(() => {
+  const f = document.createElement('div'); f.className = 'firefly';
+  f.style.left = Math.random()*100+'vw'; f.style.top = Math.random()*100+'vh';
+  f.style.animationDuration = Math.random()*5+10+'s';
+  document.body.appendChild(f); setTimeout(() => f.remove(), 15000);
+}, 300);
+
+</script>
+</body>
+</html>
